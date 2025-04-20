@@ -1,0 +1,11 @@
+<root>
+    <stat name="HP" />
+    <stat name="COMBO" />
+    <stat name="REGEN" />
+    <stat name="ATK" />
+    <stat name="CRIT" />
+    <stat name="STEAL" />
+    <stat name="DODGE" />
+    <stat name="STUN" />
+    <stat name="POISON" />
+</root>

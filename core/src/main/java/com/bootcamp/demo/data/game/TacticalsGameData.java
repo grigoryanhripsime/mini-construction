@@ -17,6 +17,7 @@ public class TacticalsGameData implements IGameData {
         for (XmlReader.Element tacticalXml : tacticalsXml) {
             final TacticalGameData tacticalGameData = new TacticalGameData();
             tacticalGameData.load(tacticalXml);
+            System.out.println(tacticalGameData.getName());
             tacticals.put(tacticalGameData.getName(), tacticalGameData);
         }
     }

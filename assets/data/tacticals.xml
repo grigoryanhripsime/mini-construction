@@ -1,3 +1,4 @@
 <root>
     <tactical name="present" icon="ui/ui-chat-gift-button-icon"/>
+    <tactical name="presen" icon="ui/ui-chat-gift-button-icon"/>
 </root>

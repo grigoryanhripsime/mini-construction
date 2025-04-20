@@ -1,0 +1,4 @@
+<root>
+    <equip name="present" lvl="1" icon="ui/ui-chat-gift-button-icon"/>
+    <equip name="presentt" lvl="2" icon="ui/ui-chat-gift-button-icon"/>
+</root>
