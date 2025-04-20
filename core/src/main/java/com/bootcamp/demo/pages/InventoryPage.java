@@ -5,18 +5,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Align;
 import com.bootcamp.demo.data.game.GameData;
 import com.bootcamp.demo.data.save.SaveData;
 import com.bootcamp.demo.engine.Labels;
 import com.bootcamp.demo.engine.Resources;
 import com.bootcamp.demo.engine.Squircle;
 import com.bootcamp.demo.engine.widgets.BorderedTable;
+import com.bootcamp.demo.engine.widgets.OffsetButton;
 import com.bootcamp.demo.localization.GameFont;
 import com.bootcamp.demo.managers.API;
 import com.bootcamp.demo.pages.core.APage;
 import com.bootcamp.demo.pages.core.Containers;
 import com.bootcamp.demo.pages.core.Widgets;
 import lombok.Getter;
+
+import javax.swing.text.Style;
 
 public class InventoryPage extends APage {
     @Getter
@@ -95,7 +99,6 @@ public class InventoryPage extends APage {
         final Table mainGearContainer = constructMainGearSegment();
         final Table secondaryGearSegment = constructSecondaryGearSegment();
 
-
         final Table segment = new Table();
         segment.add(mainGearContainer).space(70);
         segment.add(secondaryGearSegment).padTop(30);
@@ -104,19 +107,27 @@ public class InventoryPage extends APage {
     }
 
     private Table constructMainGearSegment () {
+        final Label label = Labels.make(GameFont.BOLD_20);
+        label.setText("Incomplete Set");
+        label.setColor(Color.valueOf("#423d37"));
+
         final Table incompleteSet = new Table();
         incompleteSet.setBackground(Squircle.SQUIRCLE_20.getDrawable(Color.valueOf("#ae9e91")));
+        incompleteSet.add(label);
+
+        final Image button = new Image(Resources.getDrawable("ui/stat-menu-button"));
 
         final BorderedTable milGearSkinSets = new BorderedTable();
         milGearSkinSets.setBackground(Squircle.SQUIRCLE_20.getDrawable(Color.valueOf("#f5e0cb")));
+        milGearSkinSets.add(button);
 
         final Table incompleteAndMilGearSkinSetsWrapper = new Table();
-        incompleteAndMilGearSkinSetsWrapper.add(incompleteSet).size(650, 50);
+        incompleteAndMilGearSkinSetsWrapper.add(incompleteSet).size(600, 50);
         incompleteAndMilGearSkinSetsWrapper.add(milGearSkinSets).size(100).left();
 
 
         final Containers.GearContainer mainGearContainer = new Containers.GearContainer();
-
+        mainGearContainer.setData(saveData.getEquipmentSaveData().getEquips(), gameData.getEquipnemtsGameData().getEquips());
 
         Table segment = new Table();
         segment.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c4b4a3")));
@@ -129,26 +140,32 @@ public class InventoryPage extends APage {
 
 
     private Table constructSecondaryGearSegment () {
-        final Image flag = new Image(Resources.getDrawable("ui/spinner-icon"));
+        final Image flag = new Image(Resources.getDrawable("ui/rush-icon-main"));
         final BorderedTable flagWidget = new BorderedTable();
         flagWidget.add(flag).grow();
 
         final Containers.TacticalsContainer tacticalsContainer = new Containers.TacticalsContainer();
+        tacticalsContainer.setData(saveData.getTacticalsSaveData().getTacticals(), gameData.getTacticalsGameData().getTacticals());
 
         final Table tacticalsAndFlagWrapper = new Table();
         tacticalsAndFlagWrapper.add(tacticalsContainer);
         tacticalsAndFlagWrapper.row();
         tacticalsAndFlagWrapper.add(flagWidget).size(225).space(20);
 
+        final Image pet = new Image(Resources.getDrawable("ui/pet-cat-orange"));
 
-        final Image bankRobbery = new Image(Resources.getDrawable("ui/bank-robbery"));
-        bankRobbery.setSize(150, 160);
-        final BorderedTable homeButton = new BorderedTable(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#0a0a0a")), Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#ccb578")));
-        homeButton.add(bankRobbery);
+        final Image homeImage = new Image(Resources.getDrawable("ui/home-icon"));
+        homeImage.setSize(100, 100);
+        homeImage.setPosition(60, 40);
+
+        final OffsetButton homeButton = new OffsetButton(OffsetButton.Style.ORANGE_35);
+        homeButton.addActor(homeImage);
 
         final BorderedTable petWidgetContainer = new BorderedTable();
         petWidgetContainer.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c2b8b0")));
-        petWidgetContainer.add(homeButton).size(223, 160).growY().bottom();
+        petWidgetContainer.add(pet).expandY().bottom();
+        petWidgetContainer.row();
+        petWidgetContainer.add(homeButton).size(223, 160).bottom();
 
         final Table segment = new Table();
         segment.add(tacticalsAndFlagWrapper).space(30);
@@ -158,9 +175,9 @@ public class InventoryPage extends APage {
     }
 
     private  Table constructButtonSegment () {
-        final Widgets.ButtonWidget shovelUpgradeButton = new Widgets.ButtonWidget("#ddb46d");
-        final Widgets.ButtonWidget lootButton = new Widgets.ButtonWidget("#9bd781");
-        final Widgets.ButtonWidget autoLootButton = new Widgets.ButtonWidget("#bababa");
+        final OffsetButton shovelUpgradeButton = constructSovelUpgradeButton();
+        final OffsetButton lootButton = constructLootButton();
+        final OffsetButton autoLootButton = constructAutoLootButton();
 
         final Table segment = new Table();
         segment.defaults().size(420, 180).space(50);
@@ -170,4 +187,78 @@ public class InventoryPage extends APage {
 
         return segment;
     }
+    OffsetButton constructSovelUpgradeButton () {
+        final Image shovelUpgradeImage = new Image(Resources.getDrawable("ui/shovel-upgrade-icon"));
+        shovelUpgradeImage.setSize(130, 130);
+        shovelUpgradeImage.setPosition(30, 40);
+
+        final Label blade = Labels.make(GameFont.BOLD_22);
+        blade.setText("Lv.1");
+
+        final Table bladeSegment = new Table();
+        bladeSegment.setBackground(Squircle.SQUIRCLE_10.getDrawable(Color.valueOf("#a18867")));
+        bladeSegment.add(blade).pad(10);
+
+        final Label handle = Labels.make(GameFont.BOLD_22);
+        handle.setText("Lv.1");
+
+        final Table handleSegment = new Table();
+        handleSegment.setBackground(Squircle.SQUIRCLE_10.getDrawable(Color.valueOf("#a18867")));
+        handleSegment.add(handle).pad(10);
+
+        final Table charastaristics = new Table();
+        charastaristics.add(bladeSegment).size(180, 50).space(10);
+        charastaristics.row();
+        charastaristics.add(handleSegment).size(180, 50);
+        charastaristics.setPosition(280, 100);
+
+        final OffsetButton shovelUpgradeButton = new OffsetButton(OffsetButton.Style.ORANGE_35);
+        shovelUpgradeButton.addActor(shovelUpgradeImage);
+        shovelUpgradeButton.addActor(charastaristics);
+
+        return shovelUpgradeButton;
+    }
+
+    OffsetButton constructLootButton () {
+        final Label loot = Labels.make(GameFont.BOLD_28);
+        loot.setText("Loot");
+        final Table lootSegment = new Table();
+        lootSegment.add(loot);
+
+        final Image shovel = new Image(Resources.getDrawable("ui/shovel-icon"));
+        shovel.setSize(130, 130);
+        shovel.setPosition(100, -50);
+
+        final Table wrapper = new Table();
+        wrapper.add(lootSegment);
+        wrapper.addActor(shovel);
+        wrapper.setPosition(160, 100);
+
+        final OffsetButton lootButton = new OffsetButton(OffsetButton.Style.GREEN_35);
+        lootButton.addActor(wrapper);
+
+        return lootButton;
+    }
+
+    OffsetButton constructAutoLootButton () {
+        final Label loot = Labels.make(GameFont.BOLD_28);
+        loot.setText("Auto Loot");
+        final Table lootSegment = new Table();
+        lootSegment.add(loot);
+
+        final Image shovel = new Image(Resources.getDrawable("ui/auto-loot-icon"));
+        shovel.setSize(130, 130);
+        shovel.setPosition(100, -50);
+
+        final Table wrapper = new Table();
+        wrapper.add(lootSegment);
+        wrapper.addActor(shovel);
+        wrapper.setPosition(160, 100);
+
+        final OffsetButton lootButton = new OffsetButton(OffsetButton.Style.GRAY_35);
+        lootButton.addActor(wrapper);
+
+        return lootButton;
+    }
+
 }

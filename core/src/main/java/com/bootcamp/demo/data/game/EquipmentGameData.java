@@ -9,14 +9,11 @@ public class EquipmentGameData implements IGameData {
     @Getter
     private String name;
     @Getter
-    private int lvl;
-    @Getter
     private Drawable icon;
 
     @Override
     public void load (XmlReader.Element rootXml) {
         name = rootXml.getAttribute("name");
-        lvl = Integer.parseInt(rootXml.getAttribute("lvl"));
         icon = Resources.getDrawable(rootXml.getAttribute("icon"));
     }
 }

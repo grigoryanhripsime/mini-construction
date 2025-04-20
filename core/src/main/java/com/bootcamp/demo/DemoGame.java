@@ -26,11 +26,12 @@ public class DemoGame extends Game {
         loadSaveData();
 
         final TacticalSaveData tacticalsSaveData = new TacticalSaveData();
-        tacticalsSaveData.setName("present");
+        tacticalsSaveData.setName("compass");
         tacticalsSaveData.setLevel(3);
-
         API.get(SaveData.class).getTacticalsSaveData().getTacticals().put(0, tacticalsSaveData);
+
         API.get(SaveData.class).getStatsSaveData().setSaveData(gameData.getStatsGameData().getStats());
+        API.get(SaveData.class).getEquipmentSaveData().setGear(gameData.getEquipnemtsGameData().getEquips());
         savePlayerData();
 
         setScreen(new GameScreen());
