@@ -17,81 +17,68 @@ import lombok.extern.flogger.Flogger;
 
 public class Containers {
     public static class GearContainer extends WidgetsContainer<Widgets.GearWidget> {
-        Array<Widgets.GearWidget> equipments = new Array<>(6);
 
         public GearContainer () {
             super(3);
             defaults().size(225).space(20);
             setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c4b4a3")));
             center().pad(20);
+            for (int i = 0; i < 6; i++) {
+                Widgets.GearWidget gearWidget = new Widgets.GearWidget();
+                add(gearWidget);
+            }
         }
 
-        public void setData (IntMap<EquipmentSaveData> equipsSaveData, ObjectMap<String, EquipmentGameData> equipsGameData) {
-            int i = 0;
-            for (IntMap.Entry<EquipmentSaveData> equip : equipsSaveData) {
-                if (i >= 6)
-                    break;
-                Widgets.GearWidget gearWidget = new Widgets.GearWidget();
-                gearWidget.setData(equip.value.getName(), equip.value.getLevel(), equip.value.getStars(), equipsGameData.get(equip.value.getName()).getIcon());
-                add(gearWidget);
-                equipments.add(gearWidget);
-                i++;
-            }
-            for (; i < 6; i++) {
-                Widgets.GearWidget gearWidget = new Widgets.GearWidget();
+        public void setData (IntMap<EquipmentSaveData> equipsSaveData) {
+//            int i = 0;
+//            for (IntMap.Entry<EquipmentSaveData> equip : equipsSaveData) {
+//                Widgets.GearWidget gearWidget = new Widgets.GearWidget();
 //                gearWidget.setData(equip.value.getName(), equip.value.getLevel(), equip.value.getStars(), equipsGameData.get(equip.value.getName()).getIcon());
-                add(gearWidget);
-                equipments.add(gearWidget);
-            }
+//                i++;
+//            }
+
         }
     }
 
     public static class StatContainer extends WidgetsContainer<Widgets.StatWidget> {
-
-        private Array<Widgets.StatWidget> stats = new Array<>(9);
-
         public StatContainer () {
             super(3);
             defaults().size(350, 50).space(30);
+            for (int i = 0; i < 9; i++) {
+                Widgets.StatWidget statWidget = new Widgets.StatWidget();
+                statWidget.setData("HP", 0);
+                add(statWidget);
+            }
         }
 
         public void setData (IntMap<StatSaveData> stats1) {
-            for (IntMap.Entry<StatSaveData> stat : stats1) {
-                Widgets.StatWidget statWidget = new Widgets.StatWidget();
-                statWidget.setData(stat.value.getName(), stat.value.getValue());
-                add(statWidget);
-                stats.add(statWidget);
-            }
+
         }
     }
 
     public static class TacticalsContainer extends WidgetsContainer<Table> {
 
-        @Getter @Setter
-        private Array<Widgets.TacticalWidget> tacticals;
-
         public TacticalsContainer () {
             super(2);
-            tacticals = new Array<>(4);
             setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c4b4a3")));
             defaults().size(90).pad(10);
+            for (int i = 0; i < 4; i++) {
+                Widgets.TacticalWidget tacticalWidget = new Widgets.TacticalWidget();
+                add(tacticalWidget);
+            }
         }
-        public void setData(IntMap<TacticalSaveData> tacticalsSaveData, ObjectMap<String, TacticalGameData> tacticalsGameData) {
-            int i = 0;
-            for (IntMap.Entry<TacticalSaveData> entry : tacticalsSaveData) {
-                if (i >= 4)
-                    break;
-                Widgets.TacticalWidget tacticalWidget = new Widgets.TacticalWidget();
-                tacticalWidget.setData(entry.value.getName(), tacticalsGameData.get(entry.value.getName()).getIcon(), entry.value.getLevel());
-                tacticals.add(tacticalWidget);
-                add(tacticalWidget);
-                i++;
-            }
-            for (; i < 4; i++) {
-                Widgets.TacticalWidget tacticalWidget = new Widgets.TacticalWidget();
-                tacticals.add(tacticalWidget);
-                add(tacticalWidget);
-            }
+        public void setData(IntMap<TacticalSaveData> tacticalsSaveData) {
+//            int i = 0;
+//            for (IntMap.Entry<TacticalSaveData> entry : tacticalsSaveData) {
+//                if (i >= 4)
+//                    break;
+//                Widgets.TacticalWidget tacticalWidget = new Widgets.TacticalWidget();
+//                tacticalWidget.setData(entry.value.getName(), tacticalsGameData.get(entry.value.getName()).getIcon(), entry.value.getLevel());
+//                tacticals.add(tacticalWidget);
+//                add(tacticalWidget);
+//                i++;
+//            }
+
         }
     }
 }

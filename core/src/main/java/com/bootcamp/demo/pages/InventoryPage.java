@@ -4,37 +4,40 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.utils.Align;
-import com.bootcamp.demo.data.game.GameData;
-import com.bootcamp.demo.data.save.SaveData;
 import com.bootcamp.demo.engine.Labels;
 import com.bootcamp.demo.engine.Resources;
 import com.bootcamp.demo.engine.Squircle;
 import com.bootcamp.demo.engine.widgets.BorderedTable;
-import com.bootcamp.demo.engine.widgets.OffsetButton;
 import com.bootcamp.demo.localization.GameFont;
-import com.bootcamp.demo.managers.API;
 import com.bootcamp.demo.pages.core.APage;
 import com.bootcamp.demo.pages.core.Containers;
 import com.bootcamp.demo.pages.core.Widgets;
-import lombok.Getter;
-
-import javax.swing.text.Style;
 
 public class InventoryPage extends APage {
-    @Getter
-    private SaveData saveData;
 
-    @Getter
-    private GameData gameData;
+    private Containers.StatContainer statContainer;
+    private Containers.GearContainer mainGearContainer;
+    private Containers.TacticalsContainer tacticalsContainer;
+    private Widgets.FlagWidget flagWidget;
+    private Widgets.PetWidget petWidget;
+    private Widgets.LootUpgradeButton lootUpgradeButton;
+    private Widgets.LootButton lootButton;
+    private Widgets.AutoLootButton autoLootButton;
 
     @Override
     protected void constructContent (Table content) {
 
-        saveData = API.get(SaveData.class);
-        gameData = API.get(GameData.class);
+        final Table powerSegment = constructPowerSegment();
+        final Table inventory = constructInventory();
 
+        content.add(powerSegment).size(600, 150).expandY().bottom();
+        content.row();
+        content.add(inventory).growX().bottom();
+
+//        debugAll();
+    }
+
+    private Table constructPowerSegment () {
         final Image powerIcon = new Image(Resources.getDrawable("ui/fist"));
         final Label label = Labels.make(GameFont.BOLD_32);
         label.setText("83.5K");
@@ -48,37 +51,29 @@ public class InventoryPage extends APage {
         powerSegment.add(powerIcon);
         powerSegment.add(power).size(200, 100);
 
-
-        final Table inventory = constructInventory();
-
-        content.add(powerSegment).size(600, 150).expandY().bottom();
-        content.row();
-        content.add(inventory).growX().bottom();
-
-//        debugAll();
+        return powerSegment;
     }
 
     private Table constructInventory () {
         final Table statSegment = constructStatSegment();
         final Table equippedGearSegment = constructEquippedGearSegment();
-        final Table buttonSegment = constructButtonSegment();
+        final Table buttonSegment = constructButtonsSegment();
 
 
-        final Table inventory = new Table();
-        inventory.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#fae9d7")));
+        final Table inventoryWrapper = new Table();
+        inventoryWrapper.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#fae9d7")));
 
-        inventory.add(statSegment).growX().pad(40);
-        inventory.row();
-        inventory.add(equippedGearSegment);
-        inventory.row();
-        inventory.add(buttonSegment).space(40).pad(30);
+        inventoryWrapper.add(statSegment).growX().pad(40);
+        inventoryWrapper.row();
+        inventoryWrapper.add(equippedGearSegment);
+        inventoryWrapper.row();
+        inventoryWrapper.add(buttonSegment).space(40).pad(30);
 
-        return inventory;
+        return inventoryWrapper;
     }
 
     private Table constructStatSegment () {
-        final Containers.StatContainer statContainer = new Containers.StatContainer();
-        statContainer.setData(saveData.getStatsSaveData().getStats());
+        statContainer = new Containers.StatContainer();
 
         final Image statMenuButton = new Image(Resources.getDrawable("ui/stat-menu-button"));
 
@@ -107,6 +102,19 @@ public class InventoryPage extends APage {
     }
 
     private Table constructMainGearSegment () {
+        final Table incompleteSetSegment = constructIncompleteSetSegment();
+        mainGearContainer = new Containers.GearContainer();
+
+        Table segment = new Table();
+        segment.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c4b4a3")));
+        segment.add(incompleteSetSegment);
+        segment.row();
+        segment.add(mainGearContainer);
+
+        return segment;
+    }
+
+    private Table constructIncompleteSetSegment () {
         final Label label = Labels.make(GameFont.BOLD_20);
         label.setText("Incomplete Set");
         label.setColor(Color.valueOf("#423d37"));
@@ -121,144 +129,55 @@ public class InventoryPage extends APage {
         milGearSkinSets.setBackground(Squircle.SQUIRCLE_20.getDrawable(Color.valueOf("#f5e0cb")));
         milGearSkinSets.add(button);
 
-        final Table incompleteAndMilGearSkinSetsWrapper = new Table();
-        incompleteAndMilGearSkinSetsWrapper.add(incompleteSet).size(600, 50);
-        incompleteAndMilGearSkinSetsWrapper.add(milGearSkinSets).size(100).left();
-
-
-        final Containers.GearContainer mainGearContainer = new Containers.GearContainer();
-        mainGearContainer.setData(saveData.getEquipmentSaveData().getEquips(), gameData.getEquipnemtsGameData().getEquips());
-
-        Table segment = new Table();
-        segment.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c4b4a3")));
-        segment.add(incompleteAndMilGearSkinSetsWrapper);
-        segment.row();
-        segment.add(mainGearContainer);
+        final Table segment = new Table();
+        segment.add(incompleteSet).size(600, 50);
+        segment.add(milGearSkinSets).size(100).left();
 
         return segment;
     }
-
 
     private Table constructSecondaryGearSegment () {
-        final Image flag = new Image(Resources.getDrawable("ui/rush-icon-main"));
-        final BorderedTable flagWidget = new BorderedTable();
-        flagWidget.add(flag).grow();
-
-        final Containers.TacticalsContainer tacticalsContainer = new Containers.TacticalsContainer();
-        tacticalsContainer.setData(saveData.getTacticalsSaveData().getTacticals(), gameData.getTacticalsGameData().getTacticals());
+        tacticalsContainer = new Containers.TacticalsContainer();
+        flagWidget = new Widgets.FlagWidget();
+        petWidget = new Widgets.PetWidget();
 
         final Table tacticalsAndFlagWrapper = new Table();
+        tacticalsAndFlagWrapper.defaults().space(50);
         tacticalsAndFlagWrapper.add(tacticalsContainer);
         tacticalsAndFlagWrapper.row();
-        tacticalsAndFlagWrapper.add(flagWidget).size(225).space(20);
-
-        final Image pet = new Image(Resources.getDrawable("ui/pet-cat-orange"));
-
-        final Image homeImage = new Image(Resources.getDrawable("ui/home-icon"));
-        homeImage.setSize(100, 100);
-        homeImage.setPosition(60, 40);
-
-        final OffsetButton homeButton = new OffsetButton(OffsetButton.Style.ORANGE_35);
-        homeButton.addActor(homeImage);
-
-        final BorderedTable petWidgetContainer = new BorderedTable();
-        petWidgetContainer.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c2b8b0")));
-        petWidgetContainer.add(pet).expandY().bottom();
-        petWidgetContainer.row();
-        petWidgetContainer.add(homeButton).size(223, 160).bottom();
+        tacticalsAndFlagWrapper.add(flagWidget).size(225, 225);
 
         final Table segment = new Table();
-        segment.add(tacticalsAndFlagWrapper).space(30);
-        segment.add(petWidgetContainer).size(225, 480);
+        segment.defaults().pad(30);
+        segment.add(tacticalsAndFlagWrapper);
+        segment.add(petWidget).size(225, 500);
 
         return segment;
     }
 
-    private  Table constructButtonSegment () {
-        final OffsetButton shovelUpgradeButton = constructSovelUpgradeButton();
-        final OffsetButton lootButton = constructLootButton();
-        final OffsetButton autoLootButton = constructAutoLootButton();
+    private  Table constructButtonsSegment () {
+        lootUpgradeButton = new Widgets.LootUpgradeButton();
+        lootButton = new Widgets.LootButton();
+        autoLootButton = new Widgets.AutoLootButton();
 
         final Table segment = new Table();
         segment.defaults().size(420, 180).space(50);
-        segment.add(shovelUpgradeButton);
+        segment.add(lootUpgradeButton);
         segment.add(lootButton);
         segment.add(autoLootButton);
 
         return segment;
     }
-    OffsetButton constructSovelUpgradeButton () {
-        final Image shovelUpgradeImage = new Image(Resources.getDrawable("ui/shovel-upgrade-icon"));
-        shovelUpgradeImage.setSize(130, 130);
-        shovelUpgradeImage.setPosition(30, 40);
 
-        final Label blade = Labels.make(GameFont.BOLD_22);
-        blade.setText("Lv.1");
+    @Override
+    public void show(Runnable onComplete) {
+        super.show(onComplete);
+//        SaveData saveData = API.get(SaveData.class);
 
-        final Table bladeSegment = new Table();
-        bladeSegment.setBackground(Squircle.SQUIRCLE_10.getDrawable(Color.valueOf("#a18867")));
-        bladeSegment.add(blade).pad(10);
-
-        final Label handle = Labels.make(GameFont.BOLD_22);
-        handle.setText("Lv.1");
-
-        final Table handleSegment = new Table();
-        handleSegment.setBackground(Squircle.SQUIRCLE_10.getDrawable(Color.valueOf("#a18867")));
-        handleSegment.add(handle).pad(10);
-
-        final Table charastaristics = new Table();
-        charastaristics.add(bladeSegment).size(180, 50).space(10);
-        charastaristics.row();
-        charastaristics.add(handleSegment).size(180, 50);
-        charastaristics.setPosition(280, 100);
-
-        final OffsetButton shovelUpgradeButton = new OffsetButton(OffsetButton.Style.ORANGE_35);
-        shovelUpgradeButton.addActor(shovelUpgradeImage);
-        shovelUpgradeButton.addActor(charastaristics);
-
-        return shovelUpgradeButton;
+        flagWidget.setData();
+        petWidget.setData();
+        lootUpgradeButton.setData();
+        lootButton.setData();
+        autoLootButton.setData();
     }
-
-    OffsetButton constructLootButton () {
-        final Label loot = Labels.make(GameFont.BOLD_28);
-        loot.setText("Loot");
-        final Table lootSegment = new Table();
-        lootSegment.add(loot);
-
-        final Image shovel = new Image(Resources.getDrawable("ui/shovel-icon"));
-        shovel.setSize(130, 130);
-        shovel.setPosition(100, -50);
-
-        final Table wrapper = new Table();
-        wrapper.add(lootSegment);
-        wrapper.addActor(shovel);
-        wrapper.setPosition(160, 100);
-
-        final OffsetButton lootButton = new OffsetButton(OffsetButton.Style.GREEN_35);
-        lootButton.addActor(wrapper);
-
-        return lootButton;
-    }
-
-    OffsetButton constructAutoLootButton () {
-        final Label loot = Labels.make(GameFont.BOLD_28);
-        loot.setText("Auto Loot");
-        final Table lootSegment = new Table();
-        lootSegment.add(loot);
-
-        final Image shovel = new Image(Resources.getDrawable("ui/auto-loot-icon"));
-        shovel.setSize(130, 130);
-        shovel.setPosition(100, -50);
-
-        final Table wrapper = new Table();
-        wrapper.add(lootSegment);
-        wrapper.addActor(shovel);
-        wrapper.setPosition(160, 100);
-
-        final OffsetButton lootButton = new OffsetButton(OffsetButton.Style.GRAY_35);
-        lootButton.addActor(wrapper);
-
-        return lootButton;
-    }
-
 }
