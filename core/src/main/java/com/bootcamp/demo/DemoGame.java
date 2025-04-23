@@ -6,8 +6,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
 import com.bootcamp.demo.data.game.GameData;
-import com.bootcamp.demo.data.game.StatGameData;
-import com.bootcamp.demo.data.game.TacticalGameData;
+import com.bootcamp.demo.data.game.GearGameData;
 import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.events.GameStartedEvent;
 import com.bootcamp.demo.managers.API;
@@ -28,10 +27,31 @@ public class DemoGame extends Game {
         final TacticalSaveData tacticalsSaveData = new TacticalSaveData();
         tacticalsSaveData.setName("compass");
         tacticalsSaveData.setLevel(3);
+        tacticalsSaveData.setEquipped(true);
+        tacticalsSaveData.setStars(2);
         API.get(SaveData.class).getTacticalsSaveData().getTacticals().put(0, tacticalsSaveData);
 
-        API.get(SaveData.class).getStatsSaveData().setSaveData(gameData.getStatsGameData().getStats());
-        API.get(SaveData.class).getEquipmentSaveData().setGear(gameData.getEquipnemtsGameData().getEquips());
+
+        final GearSaveData gearSaveData = new GearSaveData();
+        gearSaveData.setName("poncho");
+        gearSaveData.setLevel(15);
+        gearSaveData.setType(GearGameData.Type.BODY);
+        gearSaveData.setEquipped(true);
+        gearSaveData.setRarity(GearSaveData.Rarity.HARDENED);
+
+        final GearSaveData gearSaveData1 = new GearSaveData();
+        gearSaveData1.setName("gun");
+        gearSaveData1.setLevel(10);
+        gearSaveData1.setType(GearGameData.Type.MELEE);
+        gearSaveData1.setEquipped(true);
+        gearSaveData1.setRarity(GearSaveData.Rarity.IMMORTAL);
+
+        API.get(SaveData.class).getGearsSaveData().getGears().put(0, gearSaveData);
+        API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(GearGameData.Type.BODY, gearSaveData);
+
+        API.get(SaveData.class).getGearsSaveData().getGears().put(1, gearSaveData1);
+        API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(GearGameData.Type.MELEE, gearSaveData1);
+
         savePlayerData();
 
         setScreen(new GameScreen());

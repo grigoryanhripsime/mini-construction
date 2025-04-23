@@ -12,20 +12,15 @@ public class GameData {
     private final TacticalsGameData tacticalsGameData;
 
     @Getter
-    private final EquipnemtsGameData equipnemtsGameData;
-
-    @Getter
-    private final StatsGameData statsGameData;
+    private final GearsGameData gearsGameData;
 
     public GameData () {
         tacticalsGameData = new TacticalsGameData();
-        equipnemtsGameData = new EquipnemtsGameData();
-        statsGameData = new StatsGameData();
+        gearsGameData = new GearsGameData();
     }
 
     public void load () {
         tacticalsGameData.load(xmlReader.parse(Gdx.files.internal("data/tacticals.xml")));
-        equipnemtsGameData.load(xmlReader.parse(Gdx.files.internal("data/equipments.xml")));
-        statsGameData.load(xmlReader.parse(Gdx.files.internal("data/stats.xml")));
+        gearsGameData.load(xmlReader.parse(Gdx.files.internal("data/gears.xml")));
     }
 }

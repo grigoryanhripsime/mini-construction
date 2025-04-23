@@ -8,7 +8,7 @@ public class SaveData {
     private final TacticalsSaveData tacticalsSaveData = new TacticalsSaveData();
 
     @Getter
-    private final EquipmentsSaveData equipmentSaveData = new EquipmentsSaveData();
+    private final GearsSaveData gearsSaveData = new GearsSaveData();
 
     @Getter
     private final StatsSaveData statsSaveData = new StatsSaveData();

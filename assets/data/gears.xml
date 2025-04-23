@@ -1,0 +1,6 @@
+<root>
+    <item name="gloves" type="GLOVES" icon="ui/gears/gloves"/>
+    <item name="poncho" type="BODY" icon="ui/gears/poncho"/>
+    <item name="skate-shoes" type="SHOES" icon="ui/gears/skate-shoes"/>
+    <item name="gun" type="MELEE" icon="ui/gears/gun"/>
+</root>

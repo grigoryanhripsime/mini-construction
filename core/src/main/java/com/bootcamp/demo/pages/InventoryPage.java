@@ -4,11 +4,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.bootcamp.demo.data.save.SaveData;
 import com.bootcamp.demo.engine.Labels;
 import com.bootcamp.demo.engine.Resources;
 import com.bootcamp.demo.engine.Squircle;
 import com.bootcamp.demo.engine.widgets.BorderedTable;
 import com.bootcamp.demo.localization.GameFont;
+import com.bootcamp.demo.managers.API;
 import com.bootcamp.demo.pages.core.APage;
 import com.bootcamp.demo.pages.core.Containers;
 import com.bootcamp.demo.pages.core.Widgets;
@@ -172,7 +174,10 @@ public class InventoryPage extends APage {
     @Override
     public void show(Runnable onComplete) {
         super.show(onComplete);
-//        SaveData saveData = API.get(SaveData.class);
+        SaveData saveData = API.get(SaveData.class);
+
+        mainGearContainer.setData(saveData.getGearsSaveData());
+        tacticalsContainer.setData(saveData.getTacticalsSaveData());
 
         flagWidget.setData();
         petWidget.setData();

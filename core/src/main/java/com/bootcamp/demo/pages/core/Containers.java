@@ -2,18 +2,13 @@ package com.bootcamp.demo.pages.core;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.bootcamp.demo.data.game.*;
+import com.bootcamp.demo.data.game.GameData;
+import com.bootcamp.demo.data.game.GearGameData;
 import com.bootcamp.demo.data.save.*;
-import com.bootcamp.demo.engine.Resources;
 import com.bootcamp.demo.engine.Squircle;
 import com.bootcamp.demo.engine.widgets.WidgetsContainer;
-import com.bootcamp.demo.managers.API;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.flogger.Flogger;
 
 public class Containers {
     public static class GearContainer extends WidgetsContainer<Widgets.GearWidget> {
@@ -29,14 +24,14 @@ public class Containers {
             }
         }
 
-        public void setData (IntMap<EquipmentSaveData> equipsSaveData) {
-//            int i = 0;
-//            for (IntMap.Entry<EquipmentSaveData> equip : equipsSaveData) {
-//                Widgets.GearWidget gearWidget = new Widgets.GearWidget();
-//                gearWidget.setData(equip.value.getName(), equip.value.getLevel(), equip.value.getStars(), equipsGameData.get(equip.value.getName()).getIcon());
-//                i++;
-//            }
+        public void setData (GearsSaveData gearsSaveData) {
 
+            ObjectMap<GearGameData.Type, GearSaveData> equippedGears = gearsSaveData.getEquippedGears();
+            int i = 0;
+            for (ObjectMap.Entry<GearGameData.Type, GearSaveData> equippedGear : equippedGears) {
+                getWidgets().get(i).setData(equippedGear.value);
+                i++;
+            }
         }
     }
 
@@ -56,7 +51,7 @@ public class Containers {
         }
     }
 
-    public static class TacticalsContainer extends WidgetsContainer<Table> {
+    public static class TacticalsContainer extends WidgetsContainer<Widgets.TacticalWidget> {
 
         public TacticalsContainer () {
             super(2);
@@ -67,18 +62,12 @@ public class Containers {
                 add(tacticalWidget);
             }
         }
-        public void setData(IntMap<TacticalSaveData> tacticalsSaveData) {
-//            int i = 0;
-//            for (IntMap.Entry<TacticalSaveData> entry : tacticalsSaveData) {
-//                if (i >= 4)
-//                    break;
-//                Widgets.TacticalWidget tacticalWidget = new Widgets.TacticalWidget();
-//                tacticalWidget.setData(entry.value.getName(), tacticalsGameData.get(entry.value.getName()).getIcon(), entry.value.getLevel());
-//                tacticals.add(tacticalWidget);
-//                add(tacticalWidget);
-//                i++;
-//            }
-
+        public void setData(TacticalsSaveData tacticalsSaveData) {
+            int i = 0;
+            for (IntMap.Entry<TacticalSaveData> tactical : tacticalsSaveData.getTacticals()) {
+                getWidgets().get(i).setData(tactical.value);
+                i++;
+            }
         }
     }
 }

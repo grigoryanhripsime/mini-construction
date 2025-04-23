@@ -4,14 +4,20 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Null;
+import com.bootcamp.demo.data.game.GameData;
+import com.bootcamp.demo.data.save.GearSaveData;
+import com.bootcamp.demo.data.save.TacticalSaveData;
+import com.bootcamp.demo.dialogs.core.ADialog;
+import com.bootcamp.demo.dialogs.core.DialogManager;
 import com.bootcamp.demo.engine.Labels;
 import com.bootcamp.demo.engine.Resources;
 import com.bootcamp.demo.engine.Squircle;
 import com.bootcamp.demo.engine.widgets.BorderedTable;
 import com.bootcamp.demo.engine.widgets.OffsetButton;
 import com.bootcamp.demo.localization.GameFont;
+import com.bootcamp.demo.managers.API;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,22 +41,28 @@ public class Widgets {
             icon.setSize(180, 180);
             icon.setPosition(25, 25);
 
+            lvl = Labels.make(GameFont.BOLD_20);
+            lvl.setPosition(20, 30);
         }
 
-        public void setData (String name, int lvl, int stars, Drawable icon) {
-            this.lvl = Labels.make(GameFont.BOLD_20);
-            this.lvl.setText("Lv." + lvl);
-            this.lvl.setPosition(20, 30);
+        public void setData (@Null GearSaveData gearSaveData) {
+            if (gearSaveData == null)
+            {
+                setEmpty();
+                return;
+            }
+            setBackground(Squircle.SQUIRCLE_35.getDrawable(gearSaveData.getRarity().getBackgroundColor()));
+            lvl.setText("Lv." + gearSaveData.getLevel());
+            icon.setDrawable(API.get(GameData.class).getGearsGameData().getGears().get(gearSaveData.getName()).getIcon());
+            addActor(icon);
+            addActor(lvl);
 
-            this.icon.setDrawable(icon);
-            addActor(this.icon);
-            addActor(this.lvl);
-            int yPos = 170;
-            for (int j = 0; j < stars; j++) {
-                final Image star = new Image(Resources.getDrawable("ui/star"));
+            int xPos = 170;
+            for (int j = 0; j < gearSaveData.getRarity().getStarCount(); j++) {
+                final Image star = new Image(Resources.getDrawable("ui/star")); //this need to be pulled, not created everytime
                 star.setSize(50, 50);
-                star.setPosition(0, yPos);
-                yPos -= 30;
+                star.setPosition(xPos, 0);
+                xPos += 30;
                 addActor(star);
             }
         }
@@ -92,14 +104,14 @@ public class Widgets {
         public TacticalWidget() {
             setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#b29985")));
             icon = new Image();
+            add(icon);
         }
 
-        public void setData (String name, Drawable icon, int lvl) {
-            this.name = name;
-            this.lvl = lvl;
-            this.icon.setDrawable(icon);
-            this.icon.setFillParent(true);
-            add(this.icon);
+        public void setData (TacticalSaveData tacticalSaveData) {
+            name = tacticalSaveData.getName();
+            lvl = tacticalSaveData.getLevel();
+            icon.setDrawable(API.get(GameData.class).getTacticalsGameData().getTacticals().get(tacticalSaveData.getName()).getIcon());
+            icon.setFillParent(true);
         }
     }
 
@@ -153,6 +165,14 @@ public class Widgets {
             label = Labels.make(GameFont.BOLD_28);
             shovel = new Image();
 
+            setOnClick(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("hello");
+                    API.get(DialogManager.class).show(randomGear.class);
+                }
+            });
+
             build(Style.GREEN_35);
         }
 
@@ -188,7 +208,7 @@ public class Widgets {
         }
 
         public void setData () {
-            shovel.setDrawable(Resources.getDrawable("ui/shovel-icon"));
+            shovel.setDrawable(Resources.getDrawable("ui/auto-loot-icon"));
             label.setText("Auto Loot");
         }
 
@@ -202,7 +222,7 @@ public class Widgets {
             setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#b29985")));
             icon = new Image();
             icon.setSize(180, 180);
-            icon.setPosition(25, 25);
+            add(icon);
         }
 
         public void setData () {
@@ -218,6 +238,7 @@ public class Widgets {
             pet = new Image();
             homeButton = new HomeButton();
 
+            setPressedScale(1);
             setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c2b8b0")));
             add(pet).expandY().bottom();
             row();
@@ -225,7 +246,7 @@ public class Widgets {
         }
 
         public void setData () {
-//            pet.setDrawable(Resources.getDrawable(""));
+            pet.setDrawable(Resources.getDrawable("ui/pet-cat-orange"));
             homeButton.setData();
         }
 
@@ -250,5 +271,16 @@ public class Widgets {
             }
         }
 
+    }
+
+    public static class randomGear extends ADialog {
+
+        @Override
+        protected void constructContent(Table content) {
+            Table t = new Table();
+//            t.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.PURPLE));
+            content.add(t).size(1000, 1500);
+            content.debugAll();
+        }
     }
 }

@@ -3,11 +3,16 @@ package com.bootcamp.demo.data.save;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.bootcamp.demo.data.game.GearGameData;
 import lombok.Getter;
 
 public class TacticalsSaveData implements Json.Serializable {
     @Getter
     private final IntMap<TacticalSaveData> tacticals = new IntMap<>();
+
+    @Getter
+    private ObjectMap<String, TacticalSaveData> equippedTacticals = new ObjectMap<>();
 
     @Override
     public void write (Json json) {
@@ -24,6 +29,8 @@ public class TacticalsSaveData implements Json.Serializable {
             final Integer slotIndex = Integer.valueOf(value.name);
             final TacticalSaveData tacticalSaveData = json.readValue(TacticalSaveData.class, value);
             tacticals.put(slotIndex, tacticalSaveData);
+            if (tacticalSaveData.isEquipped())
+                equippedTacticals.put(tacticalSaveData.getName(), tacticalSaveData);
         }
     }
 }

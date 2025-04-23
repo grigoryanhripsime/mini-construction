@@ -1,6 +1,0 @@
-<root>
-    <equip name="gloves" icon="ui/gears/gloves"/>
-    <equip name="poncho" icon="ui/gears/poncho"/>
-    <equip name="skate-shoes" icon="ui/gears/skate-shoes"/>
-    <equip name="gun" icon="ui/gears/gun"/>
-</root>
