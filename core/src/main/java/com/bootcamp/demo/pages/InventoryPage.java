@@ -176,8 +176,10 @@ public class InventoryPage extends APage {
         super.show(onComplete);
         SaveData saveData = API.get(SaveData.class);
 
+        statContainer.setData(saveData);
         mainGearContainer.setData(saveData.getGearsSaveData());
         tacticalsContainer.setData(saveData.getTacticalsSaveData());
+
 
         flagWidget.setData();
         petWidget.setData();

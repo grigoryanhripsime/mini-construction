@@ -12,6 +12,8 @@ import com.bootcamp.demo.events.GameStartedEvent;
 import com.bootcamp.demo.managers.API;
 import com.bootcamp.demo.events.core.EventModule;
 
+import java.util.EnumMap;
+
 public class DemoGame extends Game {
 
     @Override
@@ -24,33 +26,78 @@ public class DemoGame extends Game {
 
         loadSaveData();
 
+
+        /// ////////////////////////
+
         final TacticalSaveData tacticalsSaveData = new TacticalSaveData();
         tacticalsSaveData.setName("compass");
         tacticalsSaveData.setLevel(3);
-        tacticalsSaveData.setEquipped(true);
-        tacticalsSaveData.setStars(2);
+        tacticalsSaveData.setRarity(GearGameData.Rarity.ELITE);
+
+        EnumMap<Stat, Float> stats0 = new EnumMap<>(Stat.class);
+        for (Stat statType : Stat.values()) {
+            stats0.put(statType, 20f); // or any other default value
+        }
+
+        StatsSaveData statsSaveData0 = new StatsSaveData();
+        statsSaveData0.setStat(stats0);
+        tacticalsSaveData.setStatsSaveData(statsSaveData0);
+
         API.get(SaveData.class).getTacticalsSaveData().getTacticals().put(0, tacticalsSaveData);
 
+        /// ////////////////////
 
         final GearSaveData gearSaveData = new GearSaveData();
         gearSaveData.setName("poncho");
         gearSaveData.setLevel(15);
-        gearSaveData.setType(GearGameData.Type.BODY);
-        gearSaveData.setEquipped(true);
-        gearSaveData.setRarity(GearSaveData.Rarity.HARDENED);
+        gearSaveData.setRarity(GearGameData.Rarity.HARDENED);
+
+        EnumMap<Stat, Float> stats = new EnumMap<>(Stat.class);
+        for (Stat statType : Stat.values()) {
+            stats.put(statType, 15.9f); // or any other default value
+        }
+
+        StatsSaveData statsSaveData = new StatsSaveData();
+        statsSaveData.setStat(stats);
+        gearSaveData.setStatsSaveData(statsSaveData);
+
+        API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(GearGameData.Type.BODY, gearSaveData);
+
+        /// ////////////////////////////
 
         final GearSaveData gearSaveData1 = new GearSaveData();
         gearSaveData1.setName("gun");
         gearSaveData1.setLevel(10);
-        gearSaveData1.setType(GearGameData.Type.MELEE);
-        gearSaveData1.setEquipped(true);
-        gearSaveData1.setRarity(GearSaveData.Rarity.IMMORTAL);
+        gearSaveData1.setRarity(GearGameData.Rarity.IMMORTAL);
 
-        API.get(SaveData.class).getGearsSaveData().getGears().put(0, gearSaveData);
-        API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(GearGameData.Type.BODY, gearSaveData);
+        EnumMap<Stat, Float> stats1 = new EnumMap<>(Stat.class);
+        for (Stat statType : Stat.values()) {
+            stats1.put(statType, 42f); // or any other default value
+        }
+        StatsSaveData statsSaveData1 = new StatsSaveData();
+        statsSaveData1.setStat(stats1);
+        gearSaveData1.setStatsSaveData(statsSaveData1);
 
-        API.get(SaveData.class).getGearsSaveData().getGears().put(1, gearSaveData1);
         API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(GearGameData.Type.MELEE, gearSaveData1);
+
+        /// /////////////////////
+
+        final GearSaveData gearSaveData2 = new GearSaveData();
+        gearSaveData2.setName("skate-shoes");
+        gearSaveData2.setLevel(11);
+        gearSaveData2.setRarity(GearGameData.Rarity.ASCENDANT_2);
+
+        EnumMap<Stat, Float> stats2 = new EnumMap<>(Stat.class);
+        for (Stat statType : Stat.values()) {
+            stats2.put(statType, 1.03f); // or any other default value
+        }
+        StatsSaveData statsSaveData2 = new StatsSaveData();
+        statsSaveData2.setStat(stats2);
+        gearSaveData2.setStatsSaveData(statsSaveData2);
+
+        API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(GearGameData.Type.SHOES, gearSaveData2);
+
+        /// /////////////////////
 
         savePlayerData();
 
@@ -94,7 +141,6 @@ public class DemoGame extends Game {
 
     private FileHandle getPlayerDataFileHandler () {
         final FileHandle playerDataFile = Gdx.files.local("usercache").child("player-data");
-        // check if file exists; if not, create an empty file
         if (!playerDataFile.exists()) {
             playerDataFile.writeString("", false);
         }

@@ -7,42 +7,27 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.bootcamp.demo.data.game.GearGameData;
 import lombok.Getter;
 
-public class GearsSaveData implements Json.Serializable {
+import java.util.Locale;
 
-    @Getter
-    private IntMap<GearSaveData> gears = new IntMap<>();
+public class GearsSaveData implements Json.Serializable {
     @Getter
     private ObjectMap<GearGameData.Type, GearSaveData> equippedGears = new ObjectMap<>();
 
     @Override
     public void write(Json json) {
-        for (IntMap.Entry<GearSaveData> entry : gears.entries()) {
-            json.writeValue(String.valueOf(entry.key), entry.value);
+        for (ObjectMap.Entry<GearGameData.Type, GearSaveData> entry : equippedGears) {
+            json.writeValue(entry.key.name(), entry.value);
         }
     }
 
     @Override
     public void read(Json json, JsonValue jsonValue) {
-        gears.clear();
+        equippedGears.clear();
 
         for (JsonValue value : jsonValue) {
-            final Integer slotIndex = Integer.valueOf(value.name);
+            final GearGameData.Type type = GearGameData.Type.valueOf(value.name.toUpperCase(Locale.ENGLISH));
             final GearSaveData gearSaveData  = json.readValue(GearSaveData.class, value);
-            gears.put(slotIndex, gearSaveData);
-            if (gearSaveData.isEquipped())
-                equippedGears.put(gearSaveData.getType(), gearSaveData);
+            equippedGears.put(type, gearSaveData);
         }
     }
-//
-//    public void setGear(ObjectMap<String, GearGameData> equips) {
-//        int i = 0;
-//        for (ObjectMap.Entry<String, GearGameData> equip : equips.entries()) {
-//            final GearSaveData equipmentSaveData = new GearSaveData();
-//            equipmentSaveData.setName(equip.value.getName());
-//            equipmentSaveData.setLevel(i + 1);
-//            equipmentSaveData.setStars(1);
-//            getEquips().put(i, equipmentSaveData);
-//            i++;
-//        }
-//    }
 }

@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
 import com.bootcamp.demo.data.game.GameData;
 import com.bootcamp.demo.data.save.GearSaveData;
+import com.bootcamp.demo.data.save.Stat;
 import com.bootcamp.demo.data.save.TacticalSaveData;
 import com.bootcamp.demo.dialogs.core.ADialog;
 import com.bootcamp.demo.dialogs.core.DialogManager;
@@ -21,6 +22,8 @@ import com.bootcamp.demo.managers.API;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Widgets {
@@ -33,7 +36,7 @@ public class Widgets {
         @Getter @Setter
         private Label lvl;
         @Getter @Setter
-        private Label stars;
+        EnumMap<Stat, Float> stats;
 
         public GearWidget() {
             setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#b29985")));
@@ -52,44 +55,55 @@ public class Widgets {
                 return;
             }
             setBackground(Squircle.SQUIRCLE_35.getDrawable(gearSaveData.getRarity().getBackgroundColor()));
-            lvl.setText("Lv." + gearSaveData.getLevel());
             icon.setDrawable(API.get(GameData.class).getGearsGameData().getGears().get(gearSaveData.getName()).getIcon());
+            lvl.setText("Lv." + gearSaveData.getLevel());
             addActor(icon);
             addActor(lvl);
 
-            int xPos = 170;
+            int xPos = 0;
             for (int j = 0; j < gearSaveData.getRarity().getStarCount(); j++) {
                 final Image star = new Image(Resources.getDrawable("ui/star")); //this need to be pulled, not created everytime
                 star.setSize(50, 50);
-                star.setPosition(xPos, 0);
+                star.setPosition(xPos, 170);
                 xPos += 30;
                 addActor(star);
             }
+            stats = gearSaveData.getStatsSaveData().getStat();
+
+            for (Map.Entry<Stat, Float> entry : stats.entrySet()) {
+                System.out.println(entry.getKey().name() + " " + entry.getValue());
+            }
+
         }
     }
 
     public static class StatWidget extends Table {
         @Getter @Setter
-        private String statName;
+        private Label statName;
         @Getter @Setter
-        private float value;
+        private Label value;
 
-        public void setData (String name, float value) {
-        Label nameLabel = Labels.make(GameFont.BOLD_22);
-        nameLabel.setText(name);
-        nameLabel.setSize(340, nameLabel.getPrefHeight());
-        nameLabel.setAlignment(Align.left);
-        nameLabel.setColor(Color.valueOf("#423d37"));
+        public StatWidget () {
+            statName = Labels.make(GameFont.BOLD_22);
+            statName.setSize(340, statName.getPrefHeight());
+            statName.setAlignment(Align.left);
+            statName.setColor(Color.valueOf("#423d37"));
 
-        Label valueLabel = Labels.make(GameFont.BOLD_22);
-        if (!Objects.equals(name, "HP") && !Objects.equals(name, "ATK"))
-            valueLabel.setText(String.valueOf(value) + "%");
-        else
-            valueLabel.setText(String.valueOf(value));
-        valueLabel.setSize(340, valueLabel.getPrefHeight());
-        valueLabel.setAlignment(Align.right);
-        addActor(nameLabel);
-        addActor(valueLabel);
+            value = Labels.make(GameFont.BOLD_22);
+            value.setSize(340, value.getPrefHeight());
+            value.setAlignment(Align.right);
+
+            addActor(statName);
+            addActor(value);
+        }
+
+        public void setData (Map.Entry<Stat, Float> stat) {
+            statName.setText(stat.getKey().name() + ":");
+
+            if (stat.getKey().getType() == Stat.Type.MULTIPLICATIVE)
+                value.setText(String.format("%.2f", stat.getValue()) + "%");
+            else
+                value.setText(String.format("%.2f", stat.getValue()));
         }
     }
 
@@ -107,7 +121,11 @@ public class Widgets {
             add(icon);
         }
 
-        public void setData (TacticalSaveData tacticalSaveData) {
+        public void setData (@Null TacticalSaveData tacticalSaveData) {
+            if (tacticalSaveData == null) {
+                return;
+            }
+
             name = tacticalSaveData.getName();
             lvl = tacticalSaveData.getLevel();
             icon.setDrawable(API.get(GameData.class).getTacticalsGameData().getTacticals().get(tacticalSaveData.getName()).getIcon());
@@ -165,14 +183,6 @@ public class Widgets {
             label = Labels.make(GameFont.BOLD_28);
             shovel = new Image();
 
-            setOnClick(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println("hello");
-                    API.get(DialogManager.class).show(randomGear.class);
-                }
-            });
-
             build(Style.GREEN_35);
         }
 
@@ -181,6 +191,15 @@ public class Widgets {
             super.buildInner(container);
             container.add(label).pad(30);
             container.add(shovel).size(130, 130);
+
+
+            setOnClick(new Runnable() {
+                @Override
+                public void run() {
+                    API.get(DialogManager.class).show(randomGear.class);
+                }
+            });
+
         }
 
         public void setData () {

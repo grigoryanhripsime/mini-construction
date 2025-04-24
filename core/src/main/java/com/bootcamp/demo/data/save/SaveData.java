@@ -10,6 +10,6 @@ public class SaveData {
     @Getter
     private final GearsSaveData gearsSaveData = new GearsSaveData();
 
-    @Getter
-    private final StatsSaveData statsSaveData = new StatsSaveData();
+//    @Getter
+//    private final StatsSaveData statsSaveData = new StatsSaveData();
 }

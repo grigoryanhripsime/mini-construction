@@ -4,11 +4,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.bootcamp.demo.data.StatsManager;
 import com.bootcamp.demo.data.game.GameData;
 import com.bootcamp.demo.data.game.GearGameData;
 import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.engine.Squircle;
 import com.bootcamp.demo.engine.widgets.WidgetsContainer;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 public class Containers {
     public static class GearContainer extends WidgetsContainer<Widgets.GearWidget> {
@@ -41,13 +45,17 @@ public class Containers {
             defaults().size(350, 50).space(30);
             for (int i = 0; i < 9; i++) {
                 Widgets.StatWidget statWidget = new Widgets.StatWidget();
-                statWidget.setData("HP", 0);
                 add(statWidget);
             }
         }
 
-        public void setData (IntMap<StatSaveData> stats1) {
-
+        public void setData (SaveData saveData) {
+            EnumMap<Stat, Float> stats = StatsManager.getAllStats(saveData);
+            int i = 0;
+            for (Map.Entry<Stat, Float> entry : stats.entrySet()) {
+                getWidgets().get(i).setData(entry);
+                i++;
+            }
         }
     }
 
