@@ -1,11 +1,9 @@
 package com.bootcamp.demo.pages.core;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.bootcamp.demo.data.StatsManager;
-import com.bootcamp.demo.data.game.GameData;
 import com.bootcamp.demo.data.game.GearGameData;
 import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.engine.Squircle;
