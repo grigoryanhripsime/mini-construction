@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
+import com.bootcamp.demo.data.game.FlagsGameData;
 import com.bootcamp.demo.data.game.GameData;
 import com.bootcamp.demo.data.game.GearGameData;
 import com.bootcamp.demo.data.save.*;
@@ -88,14 +89,25 @@ public class DemoGame extends Game {
         gearSaveData2.setRarity(GearGameData.Rarity.ASCENDANT_2);
 
         EnumMap<Stat, Float> stats2 = new EnumMap<>(Stat.class);
-        for (Stat statType : Stat.values()) {
-            stats2.put(statType, 1.03f); // or any other default value
-        }
+        stats2.put(Stat.HP, 98f);
+        stats2.put(Stat.CRIT, 34.5f);
+
         StatsSaveData statsSaveData2 = new StatsSaveData();
         statsSaveData2.setStat(stats2);
         gearSaveData2.setStatsSaveData(statsSaveData2);
 
         API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(GearGameData.Type.SHOES, gearSaveData2);
+
+        /// /////////////////////
+
+        FlagSaveData flagSaveData = new FlagSaveData();
+        flagSaveData.setLevel(12);
+        flagSaveData.setName("Rebel");
+        flagSaveData.setStatsSaveData(statsSaveData2);
+
+
+        API.get(SaveData.class).getFlagsSaveData().getFlags().put("Rebel", flagSaveData);
+        API.get(SaveData.class).getFlagsSaveData().setEquipped("Rebel");
 
         /// /////////////////////
 

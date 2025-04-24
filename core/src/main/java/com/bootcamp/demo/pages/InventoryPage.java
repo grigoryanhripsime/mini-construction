@@ -181,7 +181,7 @@ public class InventoryPage extends APage {
         tacticalsContainer.setData(saveData.getTacticalsSaveData());
 
 
-        flagWidget.setData();
+        flagWidget.setData(saveData.getFlagsSaveData());
         petWidget.setData();
         lootUpgradeButton.setData();
         lootButton.setData();

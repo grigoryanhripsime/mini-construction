@@ -6,6 +6,8 @@ import com.bootcamp.demo.data.game.GearGameData;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Locale;
+
 public class TacticalSaveData implements Json.Serializable {
 
     @Getter @Setter
@@ -30,7 +32,7 @@ public class TacticalSaveData implements Json.Serializable {
     public void read(Json json, JsonValue jsonValue) {
         name = jsonValue.getString("n");
         level = jsonValue.getInt("l");
-        rarity = GearGameData.Rarity.valueOf(jsonValue.getString("r"));
+        rarity = GearGameData.Rarity.valueOf(jsonValue.getString("r").toUpperCase(Locale.ENGLISH));
         statsSaveData = json.readValue(StatsSaveData.class, jsonValue.get("s"));
     }
 }

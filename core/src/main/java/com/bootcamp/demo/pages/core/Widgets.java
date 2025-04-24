@@ -6,11 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
+import com.bootcamp.demo.data.game.FlagsGameData;
 import com.bootcamp.demo.data.game.GameData;
-import com.bootcamp.demo.data.save.GearSaveData;
-import com.bootcamp.demo.data.save.Stat;
-import com.bootcamp.demo.data.save.TacticalSaveData;
-import com.bootcamp.demo.dialogs.core.ADialog;
+import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.dialogs.core.DialogManager;
 import com.bootcamp.demo.engine.Labels;
 import com.bootcamp.demo.engine.Resources;
@@ -24,7 +22,6 @@ import lombok.Setter;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class Widgets {
 
@@ -103,7 +100,7 @@ public class Widgets {
             if (stat.getKey().getType() == Stat.Type.MULTIPLICATIVE)
                 value.setText(String.format("%.2f", stat.getValue()) + "%");
             else
-                value.setText(String.format("%.2f", stat.getValue()));
+                value.setText(String.format("%.0f", stat.getValue()));
         }
     }
 
@@ -196,7 +193,7 @@ public class Widgets {
             setOnClick(new Runnable() {
                 @Override
                 public void run() {
-                    API.get(DialogManager.class).show(randomGear.class);
+                    API.get(DialogManager.class).show(Dialogs.RandomGear.class);
                 }
             });
 
@@ -234,7 +231,6 @@ public class Widgets {
     }
 
     public static  class FlagWidget extends BorderedTable {
-
         private Image icon;
 
         public FlagWidget () {
@@ -242,10 +238,22 @@ public class Widgets {
             icon = new Image();
             icon.setSize(180, 180);
             add(icon);
+
+            setOnClick(new Runnable() {
+                @Override
+                public void run() {
+                    API.get(DialogManager.class).show(Dialogs.FlagsDialog.class);
+                }
+            });
         }
 
-        public void setData () {
-            icon.setDrawable(Resources.getDrawable("ui/rush-icon-main"));
+        public void setData (@Null FlagsSaveData flagsSaveData) {
+            if (flagsSaveData == null) {
+                setEmpty();
+                return;
+            }
+            FlagsGameData flagsGameData = API.get(GameData.class).getFlagsGameData();
+            icon.setDrawable(flagsGameData.getFlags().get(flagsSaveData.getEquipped()).getIcon());
         }
     }
 
@@ -257,11 +265,10 @@ public class Widgets {
             pet = new Image();
             homeButton = new HomeButton();
 
-            setPressedScale(1);
             setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c2b8b0")));
             add(pet).expandY().bottom();
             row();
-            add(homeButton).size(223, 160).bottom();
+            add(homeButton).size(223, 120).bottom();
         }
 
         public void setData () {
@@ -290,16 +297,5 @@ public class Widgets {
             }
         }
 
-    }
-
-    public static class randomGear extends ADialog {
-
-        @Override
-        protected void constructContent(Table content) {
-            Table t = new Table();
-//            t.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.PURPLE));
-            content.add(t).size(1000, 1500);
-            content.debugAll();
-        }
     }
 }
