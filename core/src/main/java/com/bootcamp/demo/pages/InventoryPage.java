@@ -35,8 +35,6 @@ public class InventoryPage extends APage {
         content.add(powerSegment).size(600, 150).expandY().bottom();
         content.row();
         content.add(inventory).growX().bottom();
-
-//        debugAll();
     }
 
     private Table constructPowerSegment () {
