@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
 import com.bootcamp.demo.data.game.FlagsGameData;
 import com.bootcamp.demo.data.game.GameData;
+import com.bootcamp.demo.data.game.GearGameData;
 import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.dialogs.core.DialogManager;
 import com.bootcamp.demo.engine.Labels;
@@ -33,6 +34,8 @@ public class Widgets {
         @Getter @Setter
         private Label lvl;
         @Getter @Setter
+        private GearGameData.Rarity rarity;
+        @Getter @Setter
         EnumMap<Stat, Float> stats;
 
         public GearWidget() {
@@ -40,9 +43,11 @@ public class Widgets {
             icon = new Image();
             icon.setSize(180, 180);
             icon.setPosition(25, 25);
+            addActor(icon);
 
             lvl = Labels.make(GameFont.BOLD_20);
             lvl.setPosition(20, 30);
+            addActor(lvl);
         }
 
         public void setData (@Null GearSaveData gearSaveData) {
@@ -53,12 +58,12 @@ public class Widgets {
             }
             setBackground(Squircle.SQUIRCLE_35.getDrawable(gearSaveData.getRarity().getBackgroundColor()));
             icon.setDrawable(API.get(GameData.class).getGearsGameData().getGears().get(gearSaveData.getName()).getIcon());
+            name = gearSaveData.getName();
             lvl.setText("Lv." + gearSaveData.getLevel());
-            addActor(icon);
-            addActor(lvl);
+            rarity = gearSaveData.getRarity();
 
             int xPos = 0;
-            for (int j = 0; j < gearSaveData.getRarity().getStarCount(); j++) {
+            for (int j = 0; j < rarity.getStarCount(); j++) {
                 final Image star = new Image(Resources.getDrawable("ui/star")); //this need to be pulled, not created everytime
                 star.setSize(50, 50);
                 star.setPosition(xPos, 170);
@@ -67,10 +72,14 @@ public class Widgets {
             }
             stats = gearSaveData.getStatsSaveData().getStat();
 
-            for (Map.Entry<Stat, Float> entry : stats.entrySet()) {
-                System.out.println(entry.getKey().name() + " " + entry.getValue());
-            }
-
+            setOnClick(new Runnable() {
+                @Override
+                public void run() {
+                    Dialogs.GearDialog gearDialog = API.get(DialogManager.class).getDialog(Dialogs.GearDialog.class);
+                    gearDialog.setData(GearWidget.this);
+                    API.get(DialogManager.class).show(Dialogs.GearDialog.class);
+                }
+            });
         }
     }
 

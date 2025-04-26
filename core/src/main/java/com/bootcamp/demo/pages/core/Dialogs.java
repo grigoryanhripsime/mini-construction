@@ -24,14 +24,71 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class Dialogs {
-    public static class RandomGear extends ADialog {
+    public static class GearDialog extends ADialog {
+        private GearInfo gearInfo;
 
         @Override
         protected void constructContent(Table content) {
-            Table t = new Table();
-//            t.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.PURPLE));
-            content.add(t).size(1000, 1500);
-            content.debugAll();
+            gearInfo = new GearInfo();
+
+            Table dialog = new Table();
+            dialog.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c4b4a3")));
+            dialog.add(gearInfo);
+
+
+            content.add(dialog).width(1000);
+        }
+
+        public void setData (Widgets.GearWidget gearWidget) {
+            gearInfo.setData(gearWidget);
+        }
+
+        public class GearInfo extends Table {
+            private Image icon;
+            private Label name;
+            private Label lvl;
+            private Label rarity;
+            WidgetsContainer<Widgets.StatWidget> stats;
+
+            public  GearInfo () {
+                defaults().pad(30);
+                icon = new Image(Squircle.SQUIRCLE_35.getDrawable(Color.BLUE));
+                icon.setSize(500, 500);
+
+                name = Labels.make(GameFont.BOLD_24);
+                lvl = Labels.make(GameFont.BOLD_24);
+
+                stats = new WidgetsContainer<>(1);
+                stats.defaults().size(350, 50).space(30);
+
+                Table lvlStatsWrapper = new Table();
+                lvlStatsWrapper.defaults().pad(10);
+                lvlStatsWrapper.add(name);
+                lvlStatsWrapper.row();
+                lvlStatsWrapper.add(lvl);
+                lvlStatsWrapper.row();
+                lvlStatsWrapper.add(stats);
+
+                add(icon).size(400, 400).expandX();
+                row();
+                add(lvlStatsWrapper);
+            }
+
+            public void setData (Widgets.GearWidget gearWidget) {
+
+                icon.setDrawable(gearWidget.getIcon().getDrawable());
+                name.setText("Name: " + gearWidget.getName());
+                lvl.setText("Lvl: " + gearWidget.getLvl());
+
+                stats.clearChildren();
+
+                for (Map.Entry<Stat, Float> entry : gearWidget.getStats().entrySet()) {
+                    Widgets.StatWidget statWidget = new Widgets.StatWidget();
+                    statWidget.setData(entry);
+                    stats.add(statWidget);
+                }
+
+            }
         }
     }
 
@@ -78,7 +135,7 @@ public class Dialogs {
             Label lvl;
             WidgetsContainer<Widgets.StatWidget> stats;
 
-            EquippedFlag () {
+            public EquippedFlag () {
                 defaults().pad(30);
                 icon = new Image(Squircle.SQUIRCLE_35.getDrawable(Color.BLUE));
                 icon.setSize(500, 500);
@@ -108,12 +165,13 @@ public class Dialogs {
                 name.setText(equipped.getName() + " flag");
                 lvl.setText("Lvl: " + equipped.getLevel());
 
+                stats.clearChildren();
+
                 for (Map.Entry<Stat, Float> entry : equipped.getStatsSaveData().getStat().entrySet()) {
                     Widgets.StatWidget statWidget = new Widgets.StatWidget();
                     statWidget.setData(entry);
                     stats.add(statWidget);
                 }
-
             }
         }
 
@@ -155,14 +213,14 @@ public class Dialogs {
                     setEmpty();
                     return;
                 }
+                setBorderDrawable(Squircle.SQUIRCLE_35_BORDER.getDrawable(Color.valueOf("#81776E")));
                 icon.setDrawable(value.getIcon());
 
                 setOnClick(new Runnable() {
                     @Override
                     public void run() {
                         newSelectedFlag = value.getName();
-                        System.out.println("hello");
-                        setBorderDrawable(Squircle.SQUIRCLE_35.getDrawable(Color.BLUE));
+                        setBorderDrawable(Squircle.SQUIRCLE_35_BORDER.getDrawable(Color.BLUE));
                     }
                 });
             }
@@ -219,4 +277,16 @@ public class Dialogs {
             }
         }
     }
+
+    public static class RandomGear extends ADialog {
+
+        @Override
+        protected void constructContent(Table content) {
+            Table t = new Table();
+//            t.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.PURPLE));
+            content.add(t).size(1000, 1500);
+            content.debugAll();
+        }
+    }
+
 }
