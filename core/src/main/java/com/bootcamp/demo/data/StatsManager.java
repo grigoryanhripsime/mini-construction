@@ -14,7 +14,6 @@ public class StatsManager {
 
         final EnumMap<Stat, Float> allStats = new EnumMap<>(Stat.class);
         for (Stat entry : Stat.values()) {
-            System.out.println(entry.name());
             allStats.put(entry, 0f);
         }
 
@@ -42,8 +41,6 @@ public class StatsManager {
                 allStats.put(entry.getKey(), value);
             }
         }
-
-
         return allStats;
     }
 }

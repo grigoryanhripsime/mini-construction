@@ -184,5 +184,7 @@ public class InventoryPage extends APage {
         lootUpgradeButton.setData();
         lootButton.setData();
         autoLootButton.setData();
+
+        mainGearContainer.animate();
     }
 }

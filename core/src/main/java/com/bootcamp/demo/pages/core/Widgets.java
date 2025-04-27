@@ -139,7 +139,7 @@ public class Widgets {
         }
     }
 
-    public static class LootUpgradeButton extends OffsetButton{
+    public static class LootUpgradeButton extends OffsetButton {
         private Image shovelUpgradeImage;
         private Label bladeLevel;
         private Label handleLevel;

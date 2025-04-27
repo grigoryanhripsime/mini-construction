@@ -1,6 +1,11 @@
 package com.bootcamp.demo.pages.core;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.bootcamp.demo.data.StatsManager;
@@ -35,6 +40,25 @@ public class Containers {
                 i++;
             }
         }
+
+        public void animate () {
+            Gdx.app.postRunnable(() -> {
+                final Array<Widgets.GearWidget> widgets = getWidgets();
+
+                for (int i = 0; i < widgets.size; i++) {
+                    final Widgets.GearWidget widget = widgets.get(i);
+                    widget.setTransform(true);
+                    widget.clearActions();
+                    widget.setOrigin (Align.center);
+                    widget.addAction (Actions.sequence(
+                        Actions.delay(i * 0.1f),
+                        Actions.scaleTo(1.1f, 1.1f, 0.07f, Interpolation.sine),
+                        Actions.scaleTo(1.0f, 1.0f, 0.03f, Interpolation.sine),
+                        Actions.run(() -> widget.setTransform(false))
+                    ));
+                }
+            });
+        }
     }
 
     public static class StatContainer extends WidgetsContainer<Widgets.StatWidget> {
@@ -68,6 +92,7 @@ public class Containers {
                 add(tacticalWidget);
             }
         }
+
         public void setData(TacticalsSaveData tacticalsSaveData) {
             int i = 0;
             for (IntMap.Entry<TacticalSaveData> tactical : tacticalsSaveData.getTacticals()) {
