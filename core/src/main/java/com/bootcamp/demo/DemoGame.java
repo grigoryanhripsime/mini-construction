@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
 import com.bootcamp.demo.data.Rarity;
+import com.bootcamp.demo.data.Stat;
 import com.bootcamp.demo.data.game.GameData;
 import com.bootcamp.demo.data.game.GearGameData;
 import com.bootcamp.demo.data.save.*;
@@ -117,6 +118,23 @@ public class DemoGame extends Game {
         API.get(SaveData.class).getFlagsSaveData().setEquipped("Rebel");
 
         /// /////////////////////
+
+        PetSaveData petSaveData = new PetSaveData();
+        petSaveData.setLevel(19);
+        petSaveData.setStatsSaveData(statsSaveData2);
+        petSaveData.setRarity(Rarity.DOMINION);
+        petSaveData.setName("Lazy-cat");
+
+        PetSaveData petSaveData1 = new PetSaveData();
+        petSaveData1.setLevel(19);
+        petSaveData1.setStatsSaveData(statsSaveData2);
+        petSaveData1.setRarity(Rarity.DOMINION);
+        petSaveData1.setName("Lazy-cat2");
+
+        API.get(SaveData.class).getPetsSaveData().getPets().put("Lazy-cat", petSaveData);
+        API.get(SaveData.class).getPetsSaveData().getPets().put("Lazy-cat2", petSaveData1);
+        API.get(SaveData.class).getPetsSaveData().setEquipped("Lazy-cat");
+        /// ////////////////////
 
         savePlayerData();
 

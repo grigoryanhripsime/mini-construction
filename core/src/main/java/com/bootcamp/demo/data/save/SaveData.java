@@ -12,4 +12,7 @@ public class SaveData {
 
     @Getter
     private final FlagsSaveData flagsSaveData = new FlagsSaveData();
+
+    @Getter
+    private final PetsSaveData petsSaveData = new PetsSaveData();
 }

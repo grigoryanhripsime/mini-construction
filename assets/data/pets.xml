@@ -1,4 +1,5 @@
 <root>
-    <item name="Rebel" icon="ui/pets/pet-cat-orange"/>
+    <item name="Lazy-cat" icon="ui/pets/pet-cat-orange"/>
+    <item name="Lazy-cat2" icon="ui/pets/pet-cat-orange"/>
 </root>
 

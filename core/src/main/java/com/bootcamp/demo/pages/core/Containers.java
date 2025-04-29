@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.bootcamp.demo.data.Stat;
 import com.bootcamp.demo.data.StatsManager;
 import com.bootcamp.demo.data.game.GearGameData;
 import com.bootcamp.demo.data.save.*;

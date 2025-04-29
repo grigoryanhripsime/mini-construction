@@ -7,9 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
 import com.bootcamp.demo.data.Rarity;
+import com.bootcamp.demo.data.Stat;
 import com.bootcamp.demo.data.game.FlagsGameData;
 import com.bootcamp.demo.data.game.GameData;
-import com.bootcamp.demo.data.game.GearGameData;
 import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.dialogs.core.DialogManager;
 import com.bootcamp.demo.engine.Labels;
@@ -279,8 +279,14 @@ public class Widgets {
         }
 
         public void setData () {
-            pet.setDrawable(Resources.getDrawable("ui/pet-cat-orange"));
+            pet.setDrawable(Resources.getDrawable("ui/pets/pet-cat-orange"));
             homeButton.setData();
+            setOnClick(new Runnable() {
+                @Override
+                public void run() {
+                    API.get(DialogManager.class).show(Dialogs.PetsDialog.class);
+                }
+            });
         }
 
         private class HomeButton extends OffsetButton {
