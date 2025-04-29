@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.bootcamp.demo.data.game.FlagGameData;
@@ -12,6 +13,7 @@ import com.bootcamp.demo.data.game.GameData;
 import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.dialogs.core.ADialog;
 import com.bootcamp.demo.engine.Labels;
+import com.bootcamp.demo.engine.Resources;
 import com.bootcamp.demo.engine.Squircle;
 import com.bootcamp.demo.engine.widgets.BorderedTable;
 import com.bootcamp.demo.engine.widgets.OffsetButton;
@@ -96,14 +98,12 @@ public class Dialogs {
         EquippedFlag equippedFlag;
         FlagsContainer flagsContainer;
         String newSelectedFlag;
-        Runnable mainDialog;
         EquipButton equipButton;
 
         @Override
         protected void constructContent(Table content) {
             equippedFlag = new EquippedFlag();
             flagsContainer = new FlagsContainer();
-            newSelectedFlag = "";
             equipButton = new EquipButton();
 
             Table general = new Table();
@@ -115,18 +115,6 @@ public class Dialogs {
             general.add(equipButton);
 
             content.add(general).size(1000, 1200);
-        }
-
-        @Override
-        public void show(Runnable onComplete) {
-            super.show(onComplete);
-
-            mainDialog = onComplete;
-            SaveData saveData = API.get(SaveData.class);
-
-            equippedFlag.setData(saveData.getFlagsSaveData());
-            flagsContainer.setData(saveData.getFlagsSaveData());
-            equipButton.setData();
         }
 
         class EquippedFlag extends BorderedTable {
@@ -182,7 +170,7 @@ public class Dialogs {
                 setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c4b4a3")));
                 center().pad(20);
 
-                for (int i = 0; i < 8; i++) {
+                for (int i = 0; i < 7; i++) {
                     FlagWidget flagWidget = new FlagWidget();
                     add(flagWidget);
                 }
@@ -192,8 +180,12 @@ public class Dialogs {
                 FlagsGameData flagsGameData = API.get(GameData.class).getFlagsGameData();
 
                 int i = 0;
+                boolean isAvailable;
                 for (ObjectMap.Entry<String, FlagGameData> entry : flagsGameData.getFlags()) {
-                    getWidgets().get(i).setData(entry.value);
+                    isAvailable = false;
+                    if (flagsSaveData.getFlags().containsKey(entry.key))
+                         isAvailable = true;
+                    getWidgets().get(i).setData(entry.value, isAvailable, flagsSaveData.getEquipped());
                     i++;
                 }
             }
@@ -208,19 +200,31 @@ public class Dialogs {
                 add(icon);
             }
 
-            public void setData (@Null FlagGameData value) {
+            public void setData (@Null FlagGameData value, boolean isAvailable, String equippedFlag) {
                 if (value == null) {
                     setEmpty();
                     return;
                 }
-                setBorderDrawable(Squircle.SQUIRCLE_35_BORDER.getDrawable(Color.valueOf("#81776E")));
                 icon.setDrawable(value.getIcon());
+                setBorderDrawable(Squircle.SQUIRCLE_35_BORDER.getDrawable(Color.valueOf("#81776E")));
+
+                if (!isAvailable)
+                {
+                    Image blocked = new Image(Resources.getDrawable("ui/flags/blocked"));
+                    blocked.setSize(210, 210);
+                    blocked.setAlign(Align.center);
+                    addActor(blocked);
+                    return;
+                }
 
                 setOnClick(new Runnable() {
                     @Override
                     public void run() {
                         newSelectedFlag = value.getName();
+                        if (equippedFlag.equals(newSelectedFlag))
+                            return;
                         setBorderDrawable(Squircle.SQUIRCLE_35_BORDER.getDrawable(Color.BLUE));
+                        equipButton.setStyle(OffsetButton.Style.GREEN_35);
                     }
                 });
             }
@@ -232,7 +236,7 @@ public class Dialogs {
             public EquipButton () {
                 label = Labels.make(GameFont.BOLD_28);
 
-                build(Style.GREEN_35);
+                build();
             }
 
             @Override
@@ -241,11 +245,9 @@ public class Dialogs {
                 container.add(label).pad(30);
 
 
-                setOnClick(new Runnable() {
-                    @Override
-                    public void run() {
+                setOnClick(() -> {
                         FlagsSaveData flagsSaveData = API.get(SaveData.class).getFlagsSaveData();
-                        if (newSelectedFlag.isEmpty() || flagsSaveData.getFlags().containsKey(newSelectedFlag))
+                        if (newSelectedFlag.isEmpty() || flagsSaveData.getEquipped().compareTo(newSelectedFlag) == 0)
                             return ;
 
                         EnumMap<Stat, Float> stats2 = new EnumMap<>(Stat.class);
@@ -262,19 +264,32 @@ public class Dialogs {
 
                         flagsSaveData.getFlags().put(newSelectedFlag, flagSaveData);
                         flagsSaveData.setEquipped(newSelectedFlag);
-                        hide(() -> {
-                            FlagsDialog.this.remove();
-                            if (mainDialog != null) mainDialog.run();
-                        });
-                        API.get(PageManager.class).show(InventoryPage.class);
-                    }
+                        hide(super.onClick);
                 });
 
             }
 
             public void setData () {
+                setStyle(Style.GRAY_35);
                 label.setText("Equip");
             }
+        }
+
+        @Override
+        public void reset () {
+            newSelectedFlag = "";
+            SaveData saveData = API.get(SaveData.class);
+
+            equippedFlag.setData(saveData.getFlagsSaveData());
+            flagsContainer.setData(saveData.getFlagsSaveData());
+            equipButton.setData();
+            API.get(PageManager.class).getPage(InventoryPage.class).reset();
+        }
+
+        @Override
+        public void show(Runnable onComplete) {
+            super.show(onComplete);
+            reset();
         }
     }
 

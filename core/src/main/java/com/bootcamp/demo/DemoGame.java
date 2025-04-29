@@ -105,8 +105,13 @@ public class DemoGame extends Game {
         flagSaveData.setName("Rebel");
         flagSaveData.setStatsSaveData(statsSaveData2);
 
+        FlagSaveData flagSaveData1 = new FlagSaveData();
+        flagSaveData1.setLevel(10);
+        flagSaveData1.setName("Royal");
+        flagSaveData1.setStatsSaveData(statsSaveData2);
 
         API.get(SaveData.class).getFlagsSaveData().getFlags().put("Rebel", flagSaveData);
+        API.get(SaveData.class).getFlagsSaveData().getFlags().put("Royal", flagSaveData1);
         API.get(SaveData.class).getFlagsSaveData().setEquipped("Rebel");
 
         /// /////////////////////

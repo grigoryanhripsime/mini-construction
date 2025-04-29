@@ -170,8 +170,7 @@ public class InventoryPage extends APage {
     }
 
     @Override
-    public void show(Runnable onComplete) {
-        super.show(onComplete);
+    public void reset() {
         SaveData saveData = API.get(SaveData.class);
 
         statContainer.setData(saveData);
@@ -186,5 +185,11 @@ public class InventoryPage extends APage {
         autoLootButton.setData();
 
         mainGearContainer.animate();
+    }
+
+    @Override
+    public void show(Runnable onComplete) {
+        super.show(onComplete);
+        reset();
     }
 }

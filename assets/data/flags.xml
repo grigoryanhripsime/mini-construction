@@ -1,5 +1,10 @@
 <root>
-    <item name="Rebel" icon="ui/rush-icon-main"/>
-    <item name="Bebel" icon="ui/fist"/>
+    <item name="Rebel" icon="ui/flags/rush-icon-main"/>
+    <item name="Pirate" icon="ui/flags/pirates-flag"/>
+    <item name="Knights" icon="ui/flags/knight-flag"/>
+    <item name="Fire" icon="ui/flags/tinder-flag"/>
+    <item name="Snowflake" icon="ui/flags/snowflake-flag"/>
+    <item name="Royal" icon="ui/flags/royal-flag"/>
+    <item name="Jester" icon="ui/flags/jester-flag"/>
 </root>
 
