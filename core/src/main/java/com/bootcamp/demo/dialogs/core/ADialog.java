@@ -215,7 +215,6 @@ public abstract class ADialog extends Table {
         clearActions();
 
         remove();
-        reset();
         if (onComplete != null) {
             onComplete.run();
         }

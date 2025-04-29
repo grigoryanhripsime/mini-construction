@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
+import com.bootcamp.demo.data.Rarity;
 import com.bootcamp.demo.data.game.FlagsGameData;
 import com.bootcamp.demo.data.game.GameData;
 import com.bootcamp.demo.data.game.GearGameData;
@@ -34,7 +35,7 @@ public class Widgets {
         @Getter @Setter
         private Label lvl;
         @Getter @Setter
-        private GearGameData.Rarity rarity;
+        private Rarity rarity;
         @Getter @Setter
         EnumMap<Stat, Float> stats;
 
@@ -198,13 +199,10 @@ public class Widgets {
             container.add(label).pad(30);
             container.add(shovel).size(130, 130);
 
-
-            setOnClick(new Runnable() {
-                @Override
-                public void run() {
-                    API.get(DialogManager.class).show(Dialogs.RandomGear.class);
-                }
-            });
+//
+//            setOnClick(() -> {
+//                API.get(DialogManager.class).show(Dialogs.RandomGear.class);
+//            });
 
         }
 

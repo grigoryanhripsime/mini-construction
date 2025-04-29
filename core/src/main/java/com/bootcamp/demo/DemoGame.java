@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
-import com.bootcamp.demo.data.game.FlagsGameData;
+import com.bootcamp.demo.data.Rarity;
 import com.bootcamp.demo.data.game.GameData;
 import com.bootcamp.demo.data.game.GearGameData;
 import com.bootcamp.demo.data.save.*;
@@ -33,7 +33,7 @@ public class DemoGame extends Game {
         final TacticalSaveData tacticalsSaveData = new TacticalSaveData();
         tacticalsSaveData.setName("compass");
         tacticalsSaveData.setLevel(3);
-        tacticalsSaveData.setRarity(GearGameData.Rarity.ELITE);
+        tacticalsSaveData.setRarity(Rarity.ELITE);
 
         EnumMap<Stat, Float> stats0 = new EnumMap<>(Stat.class);
         for (Stat statType : Stat.values()) {
@@ -51,7 +51,7 @@ public class DemoGame extends Game {
         final GearSaveData gearSaveData = new GearSaveData();
         gearSaveData.setName("poncho");
         gearSaveData.setLevel(15);
-        gearSaveData.setRarity(GearGameData.Rarity.HARDENED);
+        gearSaveData.setRarity(Rarity.HARDENED);
 
         EnumMap<Stat, Float> stats = new EnumMap<>(Stat.class);
         for (Stat statType : Stat.values()) {
@@ -69,7 +69,7 @@ public class DemoGame extends Game {
         final GearSaveData gearSaveData1 = new GearSaveData();
         gearSaveData1.setName("gun");
         gearSaveData1.setLevel(10);
-        gearSaveData1.setRarity(GearGameData.Rarity.IMMORTAL);
+        gearSaveData1.setRarity(Rarity.IMMORTAL);
 
         EnumMap<Stat, Float> stats1 = new EnumMap<>(Stat.class);
         for (Stat statType : Stat.values()) {
@@ -86,7 +86,7 @@ public class DemoGame extends Game {
         final GearSaveData gearSaveData2 = new GearSaveData();
         gearSaveData2.setName("skate-shoes");
         gearSaveData2.setLevel(11);
-        gearSaveData2.setRarity(GearGameData.Rarity.ASCENDANT_2);
+        gearSaveData2.setRarity(Rarity.ASCENDANT_2);
 
         EnumMap<Stat, Float> stats2 = new EnumMap<>(Stat.class);
         stats2.put(Stat.HP, 98f);
@@ -102,11 +102,13 @@ public class DemoGame extends Game {
 
         FlagSaveData flagSaveData = new FlagSaveData();
         flagSaveData.setLevel(12);
+        flagSaveData.setRarity(Rarity.ASCENDANT);
         flagSaveData.setName("Rebel");
         flagSaveData.setStatsSaveData(statsSaveData2);
 
         FlagSaveData flagSaveData1 = new FlagSaveData();
         flagSaveData1.setLevel(10);
+        flagSaveData1.setRarity(Rarity.DOMINION);
         flagSaveData1.setName("Royal");
         flagSaveData1.setStatsSaveData(statsSaveData2);
 

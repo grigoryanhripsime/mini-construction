@@ -2,6 +2,7 @@ package com.bootcamp.demo.data.save;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.bootcamp.demo.data.Rarity;
 import com.bootcamp.demo.data.game.GearGameData;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ public class TacticalSaveData implements Json.Serializable {
     @Getter @Setter
     private int level;
     @Getter @Setter
-    private GearGameData.Rarity rarity;
+    private Rarity rarity;
     @Getter @Setter
     private StatsSaveData statsSaveData = new StatsSaveData();
 
@@ -32,7 +33,7 @@ public class TacticalSaveData implements Json.Serializable {
     public void read(Json json, JsonValue jsonValue) {
         name = jsonValue.getString("n");
         level = jsonValue.getInt("l");
-        rarity = GearGameData.Rarity.valueOf(jsonValue.getString("r").toUpperCase(Locale.ENGLISH));
+        rarity = Rarity.valueOf(jsonValue.getString("r").toUpperCase(Locale.ENGLISH));
         statsSaveData = json.readValue(StatsSaveData.class, jsonValue.get("s"));
     }
 }

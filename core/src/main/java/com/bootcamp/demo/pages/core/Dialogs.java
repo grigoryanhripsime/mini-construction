@@ -1,5 +1,6 @@
 package com.bootcamp.demo.pages.core;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -7,11 +8,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.bootcamp.demo.DemoGame;
 import com.bootcamp.demo.data.game.FlagGameData;
 import com.bootcamp.demo.data.game.FlagsGameData;
 import com.bootcamp.demo.data.game.GameData;
 import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.dialogs.core.ADialog;
+import com.bootcamp.demo.dialogs.core.DialogManager;
 import com.bootcamp.demo.engine.Labels;
 import com.bootcamp.demo.engine.Resources;
 import com.bootcamp.demo.engine.Squircle;
@@ -20,7 +23,7 @@ import com.bootcamp.demo.engine.widgets.OffsetButton;
 import com.bootcamp.demo.engine.widgets.WidgetsContainer;
 import com.bootcamp.demo.localization.GameFont;
 import com.bootcamp.demo.managers.API;
-import com.bootcamp.demo.pages.InventoryPage;
+import com.bootcamp.demo.pages.LootingPage;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -95,10 +98,22 @@ public class Dialogs {
     }
 
     public static class FlagsDialog extends ADialog {
-        EquippedFlag equippedFlag;
-        FlagsContainer flagsContainer;
-        String newSelectedFlag;
-        EquipButton equipButton;
+        private CloseButton closeButton;
+        private EquippedFlag equippedFlag;
+        private FlagsContainer flagsContainer;
+        private String newSelectedFlag;
+        private EquipButton equipButton;
+
+        @Override
+        protected void constructTitleSegment (Table titleSegment) {
+            Label titleLabel = Labels.make(GameFont.BOLD_48, Color.DARK_GRAY, "Flag Info");
+
+            CloseButton closeButton = new CloseButton();
+
+            titleSegment.add(titleLabel).expandX();
+            titleSegment.add(closeButton);
+            titleSegment.pad(30);
+        }
 
         @Override
         protected void constructContent(Table content) {
@@ -117,10 +132,11 @@ public class Dialogs {
             content.add(general).size(1000, 1200);
         }
 
-        class EquippedFlag extends BorderedTable {
+        protected class EquippedFlag extends BorderedTable {
             Image icon;
             Label name;
             Label lvl;
+            Label rarity;
             WidgetsContainer<Widgets.StatWidget> stats;
 
             public EquippedFlag () {
@@ -130,6 +146,7 @@ public class Dialogs {
 
                 name = Labels.make(GameFont.BOLD_36);
                 lvl = Labels.make(GameFont.BOLD_24);
+                rarity = Labels.make(GameFont.BOLD_20);
 
                 stats = new WidgetsContainer<>(1);
                 stats.defaults().size(350, 50).space(30);
@@ -139,6 +156,8 @@ public class Dialogs {
                 lvlStatsWrapper.add(name);
                 lvlStatsWrapper.row();
                 lvlStatsWrapper.add(lvl);
+                lvlStatsWrapper.row();
+                lvlStatsWrapper.add(rarity);
                 lvlStatsWrapper.row();
                 lvlStatsWrapper.add(stats);
 
@@ -152,6 +171,8 @@ public class Dialogs {
                 icon.setDrawable(flagsGameData.getFlags().get(flagsSaveData.getEquipped()).getIcon());
                 name.setText(equipped.getName() + " flag");
                 lvl.setText("Lvl: " + equipped.getLevel());
+                rarity.setText("Rarity: " + equipped.getRarity().getTitle());
+
 
                 stats.clearChildren();
 
@@ -163,7 +184,7 @@ public class Dialogs {
             }
         }
 
-        class FlagsContainer extends WidgetsContainer<FlagWidget> {
+        protected class FlagsContainer extends WidgetsContainer<FlagWidget> {
             public FlagsContainer () {
                 super(4);
                 defaults().size(210).space(20);
@@ -191,7 +212,7 @@ public class Dialogs {
             }
         }
 
-        class FlagWidget extends BorderedTable {
+        protected class FlagWidget extends BorderedTable {
             Image icon;
 
             public FlagWidget () {
@@ -230,7 +251,7 @@ public class Dialogs {
             }
         }
 
-        public class EquipButton extends OffsetButton {
+        protected class EquipButton extends OffsetButton {
             private Label label;
 
             public EquipButton () {
@@ -244,29 +265,28 @@ public class Dialogs {
                 super.buildInner(container);
                 container.add(label).pad(30);
 
-
                 setOnClick(() -> {
-                        FlagsSaveData flagsSaveData = API.get(SaveData.class).getFlagsSaveData();
-                        if (newSelectedFlag.isEmpty() || flagsSaveData.getEquipped().compareTo(newSelectedFlag) == 0)
-                            return ;
+                    FlagsSaveData flagsSaveData = API.get(SaveData.class).getFlagsSaveData();
+                    if (newSelectedFlag.isEmpty() || flagsSaveData.getEquipped().compareTo(newSelectedFlag) == 0)
+                        return ;
 
-                        EnumMap<Stat, Float> stats2 = new EnumMap<>(Stat.class);
-                        stats2.put(Stat.HP, 13f);
-                        stats2.put(Stat.CRIT, 24.67f);
+                    EnumMap<Stat, Float> stats2 = new EnumMap<>(Stat.class);
+                    stats2.put(Stat.HP, 13f);
+                    stats2.put(Stat.CRIT, 24.67f);
 
-                        StatsSaveData statsSaveData2 = new StatsSaveData();
-                        statsSaveData2.setStat(stats2);
+                    StatsSaveData statsSaveData2 = new StatsSaveData();
+                    statsSaveData2.setStat(stats2);
 
-                        FlagSaveData flagSaveData = new FlagSaveData();
-                        flagSaveData.setStatsSaveData(statsSaveData2);
-                        flagSaveData.setName(newSelectedFlag);
-                        flagSaveData.setLevel(1);
+                    FlagSaveData flagSaveData = new FlagSaveData();
+                    flagSaveData.setStatsSaveData(statsSaveData2);
+                    flagSaveData.setName(newSelectedFlag);
+                    flagSaveData.setLevel(1);
 
-                        flagsSaveData.getFlags().put(newSelectedFlag, flagSaveData);
-                        flagsSaveData.setEquipped(newSelectedFlag);
-                        hide(super.onClick);
+                    flagsSaveData.setEquipped(newSelectedFlag);
+                    hide(super.onClick);
+                    // During flag changing there can be a lot of changes (like general stats can be changed)
+                    API.get(PageManager.class).getPage(LootingPage.class).setData();
                 });
-
             }
 
             public void setData () {
@@ -275,33 +295,41 @@ public class Dialogs {
             }
         }
 
-        @Override
-        public void reset () {
-            newSelectedFlag = "";
+        protected class CloseButton extends OffsetButton {
+            private Label label;
+
+            public CloseButton () {
+                label = Labels.make(GameFont.BOLD_28);
+                label.setText(" X ");
+
+                build(Style.RED_35);
+            }
+
+            @Override
+            public void buildInner(Table container) {
+                super.buildInner(container);
+                container.add(label).pad(30);
+
+                setOnClick(() -> {
+                    API.get(DialogManager.class).hide(FlagsDialog.class);
+                });
+            }
+        }
+
+        public void setData () {
             SaveData saveData = API.get(SaveData.class);
 
             equippedFlag.setData(saveData.getFlagsSaveData());
             flagsContainer.setData(saveData.getFlagsSaveData());
+            newSelectedFlag = "";
             equipButton.setData();
-            API.get(PageManager.class).getPage(InventoryPage.class).reset();
+            API.get(PageManager.class).getPage(LootingPage.class).setData();
         }
 
         @Override
         public void show(Runnable onComplete) {
             super.show(onComplete);
-            reset();
+            setData();
         }
     }
-
-    public static class RandomGear extends ADialog {
-
-        @Override
-        protected void constructContent(Table content) {
-            Table t = new Table();
-//            t.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.PURPLE));
-            content.add(t).size(1000, 1500);
-            content.debugAll();
-        }
-    }
-
 }
