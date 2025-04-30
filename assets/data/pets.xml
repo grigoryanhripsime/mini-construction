@@ -1,5 +1,8 @@
 <root>
-    <item name="Lazy-cat" icon="ui/pets/pet-cat-orange"/>
-    <item name="Lazy-cat2" icon="ui/pets/pet-cat-orange"/>
+    <item name="Dog" icon="ui/pets/dog"/>
+    <item name="Koala" icon="ui/pets/koala"/>
+    <item name="Panda" icon="ui/pets/panda"/>
+    <item name="Rabbit" icon="ui/pets/rabbit"/>
+    <item name="Unicorn" icon="ui/pets/unicorn"/>
 </root>
 

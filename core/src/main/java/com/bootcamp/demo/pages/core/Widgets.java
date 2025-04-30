@@ -10,6 +10,7 @@ import com.bootcamp.demo.data.Rarity;
 import com.bootcamp.demo.data.Stat;
 import com.bootcamp.demo.data.game.FlagsGameData;
 import com.bootcamp.demo.data.game.GameData;
+import com.bootcamp.demo.data.game.PetsGameData;
 import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.dialogs.core.DialogManager;
 import com.bootcamp.demo.engine.Labels;
@@ -273,13 +274,14 @@ public class Widgets {
             homeButton = new HomeButton();
 
             setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c2b8b0")));
-            add(pet).expandY().bottom();
+            add(pet).expand().bottom();
             row();
             add(homeButton).size(223, 120).bottom();
         }
 
-        public void setData () {
-            pet.setDrawable(Resources.getDrawable("ui/pets/pet-cat-orange"));
+        public void setData (PetsSaveData petsSaveData) {
+            PetsGameData petsGameData = API.get(GameData.class).getPetsGameData();
+            pet.setDrawable(petsGameData.getPets().get(petsSaveData.getEquipped()).getIcon());
             homeButton.setData();
             setOnClick(new Runnable() {
                 @Override

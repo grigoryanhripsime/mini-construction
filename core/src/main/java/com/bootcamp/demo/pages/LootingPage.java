@@ -178,7 +178,7 @@ public class LootingPage extends APage {
 
 
         flagWidget.setData(saveData.getFlagsSaveData());
-        petWidget.setData();
+        petWidget.setData(saveData.getPetsSaveData());
         lootUpgradeButton.setData();
         lootButton.setData();
         autoLootButton.setData();

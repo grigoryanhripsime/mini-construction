@@ -99,43 +99,10 @@ public class DemoGame extends Game {
 
         API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(GearGameData.Type.SHOES, gearSaveData2);
 
-        /// /////////////////////
+        /// //////////////////////
 
-        FlagSaveData flagSaveData = new FlagSaveData();
-        flagSaveData.setLevel(12);
-        flagSaveData.setRarity(Rarity.ASCENDANT);
-        flagSaveData.setName("Rebel");
-        flagSaveData.setStatsSaveData(statsSaveData2);
-
-        FlagSaveData flagSaveData1 = new FlagSaveData();
-        flagSaveData1.setLevel(10);
-        flagSaveData1.setRarity(Rarity.DOMINION);
-        flagSaveData1.setName("Royal");
-        flagSaveData1.setStatsSaveData(statsSaveData2);
-
-        API.get(SaveData.class).getFlagsSaveData().getFlags().put("Rebel", flagSaveData);
-        API.get(SaveData.class).getFlagsSaveData().getFlags().put("Royal", flagSaveData1);
-        API.get(SaveData.class).getFlagsSaveData().setEquipped("Rebel");
-
-        /// /////////////////////
-
-        PetSaveData petSaveData = new PetSaveData();
-        petSaveData.setLevel(19);
-        petSaveData.setStatsSaveData(statsSaveData2);
-        petSaveData.setRarity(Rarity.DOMINION);
-        petSaveData.setName("Lazy-cat");
-
-        PetSaveData petSaveData1 = new PetSaveData();
-        petSaveData1.setLevel(19);
-        petSaveData1.setStatsSaveData(statsSaveData2);
-        petSaveData1.setRarity(Rarity.DOMINION);
-        petSaveData1.setName("Lazy-cat2");
-
-        API.get(SaveData.class).getPetsSaveData().getPets().put("Lazy-cat", petSaveData);
-        API.get(SaveData.class).getPetsSaveData().getPets().put("Lazy-cat2", petSaveData1);
-        API.get(SaveData.class).getPetsSaveData().setEquipped("Lazy-cat");
-        /// ////////////////////
-
+        GenerateManager.generateFlags();
+        GenerateManager.generatePets();
         savePlayerData();
 
         setScreen(new GameScreen());

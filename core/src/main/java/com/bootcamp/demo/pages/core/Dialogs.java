@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.bootcamp.demo.data.Stat;
@@ -22,7 +21,6 @@ import com.bootcamp.demo.localization.GameFont;
 import com.bootcamp.demo.managers.API;
 import com.bootcamp.demo.pages.LootingPage;
 
-import java.util.EnumMap;
 import java.util.Map;
 
 public class Dialogs {
@@ -102,7 +100,7 @@ public class Dialogs {
 
         @Override
         protected void constructTitleSegment (Table titleSegment) {
-            Label titleLabel = Labels.make(GameFont.BOLD_48, Color.DARK_GRAY, "Flag Info");
+            Label titleLabel = Labels.make(GameFont.BOLD_48, Color.DARK_GRAY, "Flags");
 
             CloseButton closeButton = new CloseButton();
 
@@ -126,7 +124,8 @@ public class Dialogs {
             general.row();
             general.add(equipButton);
 
-            content.add(general).size(1200, 1400);
+            content.pad(30);
+            content.add(general).width(1200);
         }
 
         protected class EquippedFlag extends BorderedTable {
@@ -227,9 +226,8 @@ public class Dialogs {
 
                 if (!isAvailable)
                 {
-                    Image blocked = new Image(Resources.getDrawable("ui/flags/blocked"));
-                    blocked.setSize(210, 210);
-                    blocked.setAlign(Align.center);
+                    Image blocked = new Image(Resources.getDrawable("ui/flags/blocked")); //TODO: make this block icon reusable, take from pool
+                    blocked.setPosition(120, 10);
                     addActor(blocked);
                     return;
                 }
@@ -279,11 +277,11 @@ public class Dialogs {
         }
 
         protected class CloseButton extends OffsetButton {
-            private Label label;
+            private Image icon;
 
             public CloseButton () {
-                label = Labels.make(GameFont.BOLD_28);
-                label.setText(" X ");
+                icon = new Image(Resources.getDrawable("ui/close-button"));
+                icon.setSize(100, 100);
 
                 build(Style.RED_35);
             }
@@ -291,7 +289,7 @@ public class Dialogs {
             @Override
             public void buildInner(Table container) {
                 super.buildInner(container);
-                container.add(label).pad(30);
+                container.add(icon);
 
                 setOnClick(() -> {
                     API.get(DialogManager.class).hide(FlagsDialog.class);
@@ -324,7 +322,7 @@ public class Dialogs {
 
         @Override
         protected void constructTitleSegment (Table titleSegment) {
-            Label titleLabel = Labels.make(GameFont.BOLD_48, Color.DARK_GRAY, "Pet Info");
+            Label titleLabel = Labels.make(GameFont.BOLD_40, Color.DARK_GRAY, "Pets");
 
             CloseButton closeButton = new CloseButton();
 
@@ -338,17 +336,14 @@ public class Dialogs {
         protected void constructContent(Table content) {
             equippedPet = new EquippedPet();
             petsContainer = new PetsContainer();
-            equipButton = new EquipButton();
 
             Table general = new Table();
             general.defaults().pad(17);
             general.add(equippedPet).fillX();
             general.row();
             general.add(petsContainer);
-            general.row();
-            general.add(equipButton);
 
-            content.add(general).size(1200, 1500);
+            content.add(general).width(1200);
         }
 
         protected class EquippedPet extends Table {
@@ -360,14 +355,14 @@ public class Dialogs {
 
             public EquippedPet () {
                 icon = new Image(Squircle.SQUIRCLE_35.getDrawable(Color.BLUE));
-                icon.setSize(300, 300);
-                icon.setPosition(100, 30);
-                name = Labels.make(GameFont.BOLD_24,Color.CHARTREUSE, "Hello");
-                name.setPosition(10, 450);
-                rarity = Labels.make(GameFont.BOLD_24, Color.BLACK, "Ola");
-                rarity.setPosition(10, 400);
-                lvl = Labels.make(GameFont.BOLD_24, Color.BLUE, "Barev");
-                lvl.setPosition(10, 0);
+                icon.setSize(400, 400);
+                icon.setPosition(300, 30);
+                name = Labels.make(GameFont.BOLD_24);
+                name.setPosition(10, 480);
+                rarity = Labels.make(GameFont.BOLD_24);
+                rarity.setPosition(10, 430);
+                lvl = Labels.make(GameFont.BOLD_24);
+                lvl.setPosition(10, 50);
 
                 Table iconWrapper = new Table();
                 iconWrapper.setBackground(Resources.getDrawable("ui/pets/pet-background"));
@@ -381,9 +376,16 @@ public class Dialogs {
                 stats.setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#c4b4a3")));;
                 stats.defaults().size(350, 50).pad(30);
 
-                add(iconWrapper);
+                equipButton = new EquipButton();
+
+                Table statsAndButtonWrapper = new Table();
+                statsAndButtonWrapper.add(stats).fillX();
+                statsAndButtonWrapper.add(equipButton).pad(40);
+
+
+                add(iconWrapper).size(1100, 515).pad(20);
                 row();
-                add(stats).size(1100, 100).pad(40);
+                add(statsAndButtonWrapper);
             }
 
             public void setData (PetsSaveData petsSaveData) {
@@ -393,15 +395,16 @@ public class Dialogs {
                 name.setText(equipped.getName());
                 lvl.setText("Lvl: " + equipped.getLevel());
                 rarity.setText(equipped.getRarity().getTitle());
+                rarity.setColor(equipped.getRarity().getBackgroundColor());
 
 
                 stats.clearChildren();
-
                 for (Map.Entry<Stat, Float> entry : equipped.getStatsSaveData().getStat().entrySet()) {
                     Widgets.StatWidget statWidget = new Widgets.StatWidget();
                     statWidget.setData(entry);
                     stats.add(statWidget);
                 }
+                equipButton.setData();
             }
         }
 
@@ -488,11 +491,11 @@ public class Dialogs {
         }
 
         protected class CloseButton extends OffsetButton {
-            private Label label;
+            private Image icon;
 
             public CloseButton () {
-                label = Labels.make(GameFont.BOLD_28);
-                label.setText(" X ");
+                icon = new Image(Resources.getDrawable("ui/close-button"));
+                icon.setSize(100, 100);
 
                 build(Style.RED_35);
             }
@@ -500,7 +503,7 @@ public class Dialogs {
             @Override
             public void buildInner(Table container) {
                 super.buildInner(container);
-                container.add(label).pad(30);
+                container.add(icon);
 
                 setOnClick(() -> {
                     API.get(DialogManager.class).hide(PetsDialog.class);
@@ -514,7 +517,6 @@ public class Dialogs {
             equippedPet.setData(saveData.getPetsSaveData());
             petsContainer.setData(saveData.getPetsSaveData());
             newSelectedPet = "";
-            equipButton.setData();
             API.get(PageManager.class).getPage(LootingPage.class).setData();
         }
 
