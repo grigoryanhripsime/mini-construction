@@ -49,58 +49,6 @@ public class DemoGame extends Game {
 
         /// ////////////////////
 
-        final GearSaveData gearSaveData = new GearSaveData();
-        gearSaveData.setName("poncho");
-        gearSaveData.setLevel(15);
-        gearSaveData.setRarity(Rarity.HARDENED);
-
-        EnumMap<Stat, Float> stats = new EnumMap<>(Stat.class);
-        for (Stat statType : Stat.values()) {
-            stats.put(statType, 15.9f); // or any other default value
-        }
-
-        StatsSaveData statsSaveData = new StatsSaveData();
-        statsSaveData.setStat(stats);
-        gearSaveData.setStatsSaveData(statsSaveData);
-
-        API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(GearGameData.Type.BODY, gearSaveData);
-
-        /// ////////////////////////////
-
-        final GearSaveData gearSaveData1 = new GearSaveData();
-        gearSaveData1.setName("gun");
-        gearSaveData1.setLevel(10);
-        gearSaveData1.setRarity(Rarity.IMMORTAL);
-
-        EnumMap<Stat, Float> stats1 = new EnumMap<>(Stat.class);
-        for (Stat statType : Stat.values()) {
-            stats1.put(statType, 42f); // or any other default value
-        }
-        StatsSaveData statsSaveData1 = new StatsSaveData();
-        statsSaveData1.setStat(stats1);
-        gearSaveData1.setStatsSaveData(statsSaveData1);
-
-        API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(GearGameData.Type.MELEE, gearSaveData1);
-
-        /// /////////////////////
-
-        final GearSaveData gearSaveData2 = new GearSaveData();
-        gearSaveData2.setName("skate-shoes");
-        gearSaveData2.setLevel(11);
-        gearSaveData2.setRarity(Rarity.ASCENDANT_2);
-
-        EnumMap<Stat, Float> stats2 = new EnumMap<>(Stat.class);
-        stats2.put(Stat.HP, 98f);
-        stats2.put(Stat.CRIT, 34.5f);
-
-        StatsSaveData statsSaveData2 = new StatsSaveData();
-        statsSaveData2.setStat(stats2);
-        gearSaveData2.setStatsSaveData(statsSaveData2);
-
-        API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(GearGameData.Type.SHOES, gearSaveData2);
-
-        /// //////////////////////
-
         GenerateManager.generateFlags();
         GenerateManager.generatePets();
         savePlayerData();

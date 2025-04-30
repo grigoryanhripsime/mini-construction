@@ -1,11 +1,14 @@
 package com.bootcamp.demo.pages.core;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Scaling;
 import com.bootcamp.demo.data.Stat;
 import com.bootcamp.demo.data.game.*;
 import com.bootcamp.demo.data.save.*;
@@ -20,6 +23,7 @@ import com.bootcamp.demo.engine.widgets.WidgetsContainer;
 import com.bootcamp.demo.localization.GameFont;
 import com.bootcamp.demo.managers.API;
 import com.bootcamp.demo.pages.LootingPage;
+import lombok.Getter;
 
 import java.util.Map;
 
@@ -129,15 +133,15 @@ public class Dialogs {
         }
 
         protected class EquippedFlag extends BorderedTable {
-            Image icon;
-            Label name;
-            Label lvl;
-            Label rarity;
-            WidgetsContainer<Widgets.StatWidget> stats;
+            private Image icon;
+            private Label name;
+            private Label lvl;
+            private Label rarity;
+            private WidgetsContainer<Widgets.StatWidget> stats;
 
             public EquippedFlag () {
                 defaults().pad(60);
-                icon = new Image(Squircle.SQUIRCLE_35.getDrawable(Color.BLUE));
+                icon = new Image();
 
                 name = Labels.make(GameFont.BOLD_36);
                 lvl = Labels.make(GameFont.BOLD_24);
@@ -524,6 +528,216 @@ public class Dialogs {
         public void show(Runnable onComplete) {
             super.show(onComplete);
             setData();
+        }
+    }
+
+    public static class RandomGearDialog extends ADialog {
+        private CurrentGear currentGear;
+//        private Pool<CurrentGear> currentGearPool;
+        private DroppedGear droppedGear;
+        private GearSaveData generatedItem;
+
+        @Override
+        protected void constructContent(Table content) {
+//            currentGearPool = new Pool<CurrentGear>() {
+//                @Override
+//                protected CurrentGear newObject() {
+//                    return new CurrentGear();
+//                }
+//            };
+//            currentGear = currentGearPool.obtain();
+
+            currentGear = new CurrentGear();
+            droppedGear = new DroppedGear();
+
+            Table general = new Table();
+            general.defaults().width(1000).pad(30);
+            general.add(currentGear);
+            general.row();
+            general.add(droppedGear).fillX();
+
+            content.add(general);
+        }
+
+        public class CurrentGear extends BorderedTable implements Pool.Poolable {
+            private GearWidget gearWidget;
+
+            public  CurrentGear () {
+                gearWidget = new GearWidget();
+
+                add(gearWidget);
+            }
+
+            public void setData (GearSaveData gearSaveData) {
+                gearWidget.setData(gearSaveData);
+            }
+        }
+
+        public class DroppedGear extends BorderedTable {
+            private GearWidget gearWidget;
+            private DropButton dropButton;
+            private EquipButton equipButton;
+
+            public  DroppedGear () {
+                gearWidget = new GearWidget();
+
+                dropButton = new DropButton();
+                equipButton = new EquipButton();
+
+                final Table buttons = new Table();
+                buttons.defaults().pad(30);
+                buttons.add(dropButton);
+                buttons.add(equipButton);
+
+                add(gearWidget);
+                row();
+                add(buttons);
+            }
+
+            public void setData (GearSaveData gearSaveData) {
+                gearWidget.setData(gearSaveData);
+                dropButton.setData();
+                equipButton.setData();
+            }
+
+            public class DropButton extends OffsetButton {
+                private Label label;
+
+                public DropButton () {
+                    label = Labels.make(GameFont.BOLD_28);
+
+                    build();
+                }
+                @Override
+                public void buildInner(Table container) {
+                    super.buildInner(container);
+                    container.add(label).pad(30);
+
+                    setOnClick(() -> {
+                        Gdx.app.postRunnable(() -> {
+                            hide(super.onClick);
+                        });
+                    });
+                }
+
+                public void setData () {
+                    setStyle(Style.RED_35);
+                    label.setText("  Drop  ");
+                }
+            }
+
+            public class EquipButton extends OffsetButton {
+                private Label label;
+
+                public EquipButton () {
+                    label = Labels.make(GameFont.BOLD_28);
+
+                    build();
+                }
+
+                @Override
+                public void buildInner(Table container) {
+                    super.buildInner(container);
+                    container.add(label).pad(30);
+
+                    setOnClick(() -> {
+                        API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(gearWidget.getType(), generatedItem);
+                        Gdx.app.postRunnable(() -> {
+                            hide(super.onClick);
+                            API.get(PageManager.class).getPage(LootingPage.class).setData();
+                        });
+                    });
+                }
+
+                public void setData () {
+                    setStyle(Style.GREEN_35);
+                    label.setText(" Equip ");
+                }
+            }
+        }
+
+        public class GearWidget extends Table {
+            private Image icon;
+            private BorderedTable iconSegment;
+            private Label name;
+            private Label lvl;
+            private Label rarity;
+            private WidgetsContainer<Widgets.StatWidget> stats;
+            @Getter
+            private GearGameData.Type type;
+
+            public GearWidget () {;
+                name = Labels.make(GameFont.BOLD_48);
+
+                icon = new Image();
+                icon.setFillParent(true);
+                lvl = Labels.make(GameFont.BOLD_24);
+                lvl.setPosition(50, 50);
+                rarity = Labels.make(GameFont.BOLD_24);
+
+                iconSegment = new BorderedTable();
+                iconSegment.addActor(icon);
+                iconSegment.addActor(lvl);
+
+                Table iconAndRarityWrapper = new Table();
+                iconAndRarityWrapper.add(iconSegment).size(400, 400);
+                iconAndRarityWrapper.row();
+                iconAndRarityWrapper.add(rarity);
+
+                stats = new WidgetsContainer<>(1);
+                stats.defaults().size(350, 50).space(30);
+
+                Table iconAndStatsWrapper = new Table();
+                iconAndStatsWrapper.defaults().pad(30);
+                iconAndStatsWrapper.add(iconAndRarityWrapper);
+                iconAndStatsWrapper.add(stats);
+
+                add(name);
+                row();
+                add(iconAndStatsWrapper).fillX();
+            }
+
+            public void setData (@Null  GearSaveData gearSaveData) {
+                if (gearSaveData == null) {
+//                    currentGearPool.free(currentGear);
+                    currentGear.remove();
+                    return;
+                }
+                GearGameData gearGameData = API.get(GameData.class).getGearsGameData().getGears().get(gearSaveData.getName());
+
+                icon.setDrawable(gearGameData.getIcon());
+                iconSegment.setBackground(Squircle.SQUIRCLE_35.getDrawable(gearSaveData.getRarity().getBackgroundColor()));
+                name.setText(gearSaveData.getName());
+                lvl.setText("Lv." + gearSaveData.getLevel());
+                rarity.setText(gearSaveData.getRarity().getTitle());
+                rarity.setColor(gearSaveData.getRarity().getBackgroundColor());
+                type = gearGameData.getType();
+
+                stats.clearChildren();
+
+                for (Map.Entry<Stat, Float> entry : gearSaveData.getStatsSaveData().getStat().entrySet()) {
+                    Widgets.StatWidget statWidget = new Widgets.StatWidget(); //TODO: take stats from pool
+                    statWidget.setData(entry);
+                    stats.add(statWidget);
+                }
+            }
+
+        }
+
+        @Override
+        public void show(Runnable onComplete) {
+            super.show(onComplete);
+            GearsGameData gearsGameData = API.get(GameData.class).getGearsGameData();
+            GearsSaveData gearsSaveData = API.get(SaveData.class).getGearsSaveData();
+
+            generatedItem = GenerateManager.generateGear();
+            String name = generatedItem.getName();
+            GearGameData.Type type = gearsGameData.getGears().get(name).getType();
+            System.out.println(type.name() + " " + gearsSaveData.getEquippedGears().get(type));
+
+            GearSaveData gearSaveData = gearsSaveData.getEquippedGears().get(type);
+            currentGear.setData(gearSaveData);
+            droppedGear.setData(generatedItem);
         }
     }
 }
