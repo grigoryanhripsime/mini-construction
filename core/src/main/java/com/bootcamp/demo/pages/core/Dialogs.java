@@ -143,7 +143,6 @@ public class Dialogs {
                 container.add(icon);
 
                 setOnClick(() -> {
-                    //by this for we are getting back our stars
                     for (int i = getChildren().size - 1; i >= 0; i--) {
                         Actor actor = getChildren().get(i);
                         if (actor instanceof Widgets.StarWidget) {
@@ -351,7 +350,6 @@ public class Dialogs {
                     if (newSelectedFlag.isEmpty() || flagsSaveData.getEquipped().compareTo(newSelectedFlag) == 0)
                         return ;
                     flagsSaveData.setEquipped(newSelectedFlag);
-                    //by this for we are getting back our stars
                     for (int i = getChildren().size - 1; i >= 0; i--) {
                         Actor actor = getChildren().get(i);
                         if (actor instanceof Widgets.StarWidget) {
@@ -387,7 +385,6 @@ public class Dialogs {
                 container.add(icon);
 
                 setOnClick(() -> {
-                    //by this for we are getting back our stars
                     for (int i = getChildren().size - 1; i >= 0; i--) {
                         Actor actor = getChildren().get(i);
                         if (actor instanceof Widgets.StarWidget) {
@@ -567,13 +564,19 @@ public class Dialogs {
                 icon.setDrawable(petGameData.getIcon());
                 setBackground(Squircle.SQUIRCLE_35.getDrawable(value.getRarity().getBackgroundColor()));
                 setBorderDrawable(Squircle.SQUIRCLE_35_BORDER.getDrawable(Color.valueOf("#81776E")));
-
+                int xPos = 10;
+                for (int j = 0; j < value.getRarity().getStarCount(); j++) {
+                    Widgets.StarWidget star = starPool.obtain();
+                    star.setPosition(xPos, 200);
+                    xPos += 30;
+                    addActor(star);
+                }
                 setOnClick(() -> {
-                        newSelectedPet = value.getName();
-                        if (equippedPet.equals(newSelectedPet))
-                            return;
-                        setBorderDrawable(Squircle.SQUIRCLE_35_BORDER.getDrawable(Color.BLUE));
-                        equipButton.setStyle(OffsetButton.Style.GREEN_35);
+                    newSelectedPet = value.getName();
+                    if (equippedPet.equals(newSelectedPet))
+                        return;
+                    setBorderDrawable(Squircle.SQUIRCLE_35_BORDER.getDrawable(Color.BLUE));
+                    equipButton.setStyle(OffsetButton.Style.GREEN_35);
                 });
             }
         }
@@ -596,7 +599,6 @@ public class Dialogs {
                     PetsSaveData petsSaveData = API.get(SaveData.class).getPetsSaveData();
                     if (newSelectedPet.isEmpty() || petsSaveData.getEquipped().compareTo(newSelectedPet) == 0)
                         return ;
-                    //by this for we are getting back our stars
                     for (int i = getChildren().size - 1; i >= 0; i--) {
                         Actor actor = getChildren().get(i);
                         if (actor instanceof Widgets.StarWidget) {
@@ -633,7 +635,6 @@ public class Dialogs {
                 container.add(icon);
 
                 setOnClick(() -> {
-                    //by this for we are getting back our stars
                     for (int i = getChildren().size - 1; i >= 0; i--) {
                         Actor actor = getChildren().get(i);
                         if (actor instanceof Widgets.StarWidget) {
@@ -757,7 +758,6 @@ public class Dialogs {
                     container.add(label).pad(30);
 
                     setOnClick(() -> {
-                        //by this for we are getting back our stars
                         for (int i = getChildren().size - 1; i >= 0; i--) {
                             Actor actor = getChildren().get(i);
                             if (actor instanceof Widgets.StarWidget) {
@@ -790,7 +790,6 @@ public class Dialogs {
                     container.add(label).pad(30);
 
                     setOnClick(() -> {
-                        //by this for we are getting back our stars
                         for (int i = getChildren().size - 1; i >= 0; i--) {
                             Actor actor = getChildren().get(i);
                             if (actor instanceof Widgets.StarWidget) {

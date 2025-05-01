@@ -59,7 +59,6 @@ public class Widgets {
         }
 
         public void setData (@Null GearSaveData gearSaveData) {
-            //by this for we are getting back our stars
             for (int i = getChildren().size - 1; i >= 0; i--) {
                 Actor actor = getChildren().get(i);
                 if (actor instanceof StarWidget) {
@@ -278,7 +277,6 @@ public class Widgets {
         }
 
         public void setData (@Null FlagsSaveData flagsSaveData) {
-            //by this for we are getting back our stars
             for (int i = getChildren().size - 1; i >= 0; i--) {
                 Actor actor = getChildren().get(i);
                 if (actor instanceof StarWidget) {
@@ -327,7 +325,6 @@ public class Widgets {
         }
 
         public void setData (PetsSaveData petsSaveData) {
-            //by this for we are getting back our stars
             for (int i = getChildren().size - 1; i >= 0; i--) {
                 Actor actor = getChildren().get(i);
                 if (actor instanceof StarWidget) {
