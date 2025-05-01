@@ -12,6 +12,8 @@ public class GearGameData implements IGameData {
     @Getter
     private String name;
     @Getter
+    private String title;
+    @Getter
     private Type type;
     @Getter
     private Drawable icon;
@@ -19,6 +21,7 @@ public class GearGameData implements IGameData {
     @Override
     public void load (XmlReader.Element rootXml) {
         name = rootXml.getAttribute("name");
+        title = rootXml.getAttribute("title");
         type = Type.valueOf(rootXml.getAttribute("type").toUpperCase(Locale.ENGLISH));
         icon = Resources.getDrawable(rootXml.getAttribute("icon"));
     }

@@ -1,37 +1,37 @@
-package com.bootcamp.demo.data.save;
+package com.bootcamp.demo.data;
 
-import com.bootcamp.demo.data.Rarity;
-import com.bootcamp.demo.data.Stat;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.bootcamp.demo.data.game.GameData;
 import com.bootcamp.demo.data.game.GearGameData;
-import com.bootcamp.demo.data.game.GearsGameData;
+import com.bootcamp.demo.data.game.PetGameData;
+import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.managers.API;
 
 import java.util.EnumMap;
 import java.util.Random;
 
 public class GenerateManager {
-    public static void generatePets () {
-        Random rand = new Random();
-        String[] pets = {"Dog", "Koala", "Panda", "Rabbit", "Unicorn"};
+    private final static Random rand = new Random();
+    private final static String[] flags = {"Rebel", "Pirate", "Knights", "Fire", "Snowflake", "Royal", "Jester"};
+    private final static String[] gears = {"kitchen-gloves", "swat-boots", "gun", "brass-knuckles", "sombrero"};
 
-        for (String pet : pets) {
+
+    public static void generatePets () {
+        ObjectMap<String, PetGameData> pets = API.get(GameData.class).getPetsGameData().getPets();
+        for (ObjectMap.Entry<String, PetGameData> entry : pets) {
             PetSaveData petSaveData = new PetSaveData();
             petSaveData.setLevel(rand.nextInt(1, 25));
             petSaveData.setStatsSaveData(generateStats());
             petSaveData.setRarity(Rarity.values()[rand.nextInt(15)]);
-            petSaveData.setName(pet);
-            API.get(SaveData.class).getPetsSaveData().getPets().put(pet, petSaveData);
-            API.get(SaveData.class).getPetsSaveData().setEquipped(pet);
+            petSaveData.setName(entry.key);
+            API.get(SaveData.class).getPetsSaveData().getPets().put(entry.key, petSaveData);
+            API.get(SaveData.class).getPetsSaveData().setEquipped(entry.key);
         }
     }
 
     public static void generateFlags () {
-        Random rand = new Random();
-        String[] flags = {"Rebel", "Pirate", "Knights", "Fire", "Snowflake", "Royal", "Jester"};
-        int index = rand.nextInt(0, flags.length);
-
         for (int i = 0; i < 4; i++) {
+            int index = rand.nextInt(0, flags.length);
             FlagSaveData flagSaveData = new FlagSaveData();
             flagSaveData.setLevel(rand.nextInt(1, 25));
             flagSaveData.setStatsSaveData(generateStats());
@@ -42,9 +42,20 @@ public class GenerateManager {
         }
     }
 
-    public static StatsSaveData generateStats () {
-        Random rand = new Random();
+    public static void generateGears () {
+        ObjectMap<String, GearGameData> gears = API.get(GameData.class).getGearsGameData().getGears();
 
+        for (ObjectMap.Entry<String, GearGameData> entry : gears.entries()) {
+            GearSaveData gearSaveData = new GearSaveData();
+            gearSaveData.setLevel(rand.nextInt(1, 25));
+            gearSaveData.setStatsSaveData(generateStats());
+            gearSaveData.setRarity(Rarity.values()[rand.nextInt(15)]);
+            gearSaveData.setName(entry.key);
+            API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(entry.value.getType(), gearSaveData);
+        }
+    }
+
+    public static StatsSaveData generateStats () {
         EnumMap<Stat, Float> stats = new EnumMap<>(Stat.class);
         for (int i = 0; i < 5; i++) {
             Stat stat = Stat.values()[rand.nextInt(8)];
@@ -56,12 +67,8 @@ public class GenerateManager {
         return statsSaveData;
     }
 
-    public static GearSaveData generateGear () {
-        Random rand = new Random();
-
-        String[] gears = {"gloves", "poncho", "skate-shoes", "gun"};
+    public static GearSaveData generateRandomGear() {
         int index = rand.nextInt(0, gears.length);
-
         GearSaveData gearSaveData = new GearSaveData();
         gearSaveData.setName(gears[index]);
         gearSaveData.setLevel(rand.nextInt(1, 25));

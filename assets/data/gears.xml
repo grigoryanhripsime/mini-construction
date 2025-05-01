@@ -1,6 +1,8 @@
 <root>
-    <item name="gloves" type="GLOVES" icon="ui/gears/gloves"/>
-    <item name="poncho" type="BODY" icon="ui/gears/poncho"/>
-    <item name="skate-shoes" type="SHOES" icon="ui/gears/skate-shoes"/>
-    <item name="gun" type="WEAPON" icon="ui/gears/gun"/>
+    <item name="kitchen-gloves" title="Kitchen gloves" type="GLOVES" icon="ui/gears/kitchen-gloves"/>
+    <item name="poncho" title="Poncho" type="BODY" icon="ui/gears/poncho"/>
+    <item name="swat-boots" title="S.W.A.T. boots" type="SHOES" icon="ui/gears/swat-boots"/>
+    <item name="gun" title="Gun" type="WEAPON" icon="ui/gears/gun"/>
+    <item name="brass-knuckles" title="Brass knuckles" type="MELEE" icon="ui/gears/brass-knuckles"/>
+    <item name="sombrero" title="Sombrero" type="HEAD" icon="ui/gears/sombrero"/>
 </root>

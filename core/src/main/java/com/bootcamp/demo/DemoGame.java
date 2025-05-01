@@ -5,10 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
+import com.bootcamp.demo.data.GenerateManager;
 import com.bootcamp.demo.data.Rarity;
 import com.bootcamp.demo.data.Stat;
 import com.bootcamp.demo.data.game.GameData;
-import com.bootcamp.demo.data.game.GearGameData;
+import com.bootcamp.demo.data.game.GearsGameData;
 import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.events.GameStartedEvent;
 import com.bootcamp.demo.managers.API;
@@ -49,6 +50,7 @@ public class DemoGame extends Game {
 
         /// ////////////////////
 
+        GenerateManager.generateGears();
         GenerateManager.generateFlags();
         GenerateManager.generatePets();
         savePlayerData();

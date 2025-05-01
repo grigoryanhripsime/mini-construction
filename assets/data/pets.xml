@@ -1,8 +1,8 @@
 <root>
-    <item name="Dog" icon="ui/pets/dog"/>
-    <item name="Koala" icon="ui/pets/koala"/>
-    <item name="Panda" icon="ui/pets/panda"/>
-    <item name="Rabbit" icon="ui/pets/rabbit"/>
-    <item name="Unicorn" icon="ui/pets/unicorn"/>
+    <item name="dog" title="Dog" icon="ui/pets/dog"/>
+    <item name="koala" title="Koala" icon="ui/pets/koala"/>
+    <item name="panda" title="Panda" icon="ui/pets/panda"/>
+    <item name="rabbit" title="Rabbit" icon="ui/pets/rabbit"/>
+    <item name="unicorn" title="Unicorn" icon="ui/pets/unicorn"/>
 </root>
 

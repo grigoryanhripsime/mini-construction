@@ -10,6 +10,7 @@ import com.bootcamp.demo.data.Rarity;
 import com.bootcamp.demo.data.Stat;
 import com.bootcamp.demo.data.game.FlagsGameData;
 import com.bootcamp.demo.data.game.GameData;
+import com.bootcamp.demo.data.game.GearGameData;
 import com.bootcamp.demo.data.game.PetsGameData;
 import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.dialogs.core.DialogManager;
@@ -30,7 +31,9 @@ public class Widgets {
 
     public static class GearWidget extends BorderedTable {
         @Getter @Setter
-        private String name;
+        private String title;
+        @Getter @Setter
+        private GearGameData.Type type;
         @Getter @Setter
         private Image icon;
         @Getter @Setter
@@ -58,9 +61,11 @@ public class Widgets {
                 setEmpty();
                 return;
             }
+            GearGameData gearGameData = API.get(GameData.class).getGearsGameData().getGears().get(gearSaveData.getName());
             setBackground(Squircle.SQUIRCLE_35.getDrawable(gearSaveData.getRarity().getBackgroundColor()));
-            icon.setDrawable(API.get(GameData.class).getGearsGameData().getGears().get(gearSaveData.getName()).getIcon());
-            name = gearSaveData.getName();
+            icon.setDrawable(gearGameData.getIcon());
+            title = gearGameData.getTitle();
+            type = gearGameData.getType();
             lvl.setText("Lv." + gearSaveData.getLevel());
             rarity = gearSaveData.getRarity();
 
