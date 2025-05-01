@@ -125,6 +125,16 @@ public class Dialogs {
                     stats.add(statWidget);
                 }
             }
+
+            public void freeStars() {
+                for (int i = iconSegment.getChildren().size - 1; i >= 0; i--) {
+                    Actor actor = iconSegment.getChildren().get(i);
+                    if (actor instanceof Widgets.StarWidget) {
+                        starPool.free((Widgets.StarWidget) actor);
+                        actor.remove();
+                    }
+                }
+            }
         }
 
         public class CloseButton extends OffsetButton {
@@ -143,21 +153,21 @@ public class Dialogs {
                 container.add(icon);
 
                 setOnClick(() -> {
-                    for (int i = getChildren().size - 1; i >= 0; i--) {
-                        Actor actor = getChildren().get(i);
-                        if (actor instanceof Widgets.StarWidget) {
-                            starPool.free((Widgets.StarWidget) actor);
-                            actor.remove();
-                        }
-                    }
+                    freeStars();
                     API.get(DialogManager.class).hide(GearDialog.class);
                 });
             }
         }
 
         public void setData (GearSaveData gearSaveData) {
+            freeStars();
             gearInfo.setData(gearSaveData);
         }
+
+        public void freeStars() {
+            gearInfo.freeStars();
+        }
+
     }
 
     public static class FlagsDialog extends ADialog {
@@ -350,13 +360,7 @@ public class Dialogs {
                     if (newSelectedFlag.isEmpty() || flagsSaveData.getEquipped().compareTo(newSelectedFlag) == 0)
                         return ;
                     flagsSaveData.setEquipped(newSelectedFlag);
-                    for (int i = getChildren().size - 1; i >= 0; i--) {
-                        Actor actor = getChildren().get(i);
-                        if (actor instanceof Widgets.StarWidget) {
-                            starPool.free((Widgets.StarWidget) actor);
-                            actor.remove();
-                        }
-                    }
+                    freeStars();
                     hide(super.onClick);
                     // During flag changing there can be a lot of changes (like general stats can be changed)
                     API.get(PageManager.class).getPage(LootingPage.class).setData();
@@ -385,19 +389,14 @@ public class Dialogs {
                 container.add(icon);
 
                 setOnClick(() -> {
-                    for (int i = getChildren().size - 1; i >= 0; i--) {
-                        Actor actor = getChildren().get(i);
-                        if (actor instanceof Widgets.StarWidget) {
-                            starPool.free((Widgets.StarWidget) actor);
-                            actor.remove();
-                        }
-                    }
+                    freeStars();
                     API.get(DialogManager.class).hide(FlagsDialog.class);
                 });
             }
         }
 
         public void setData () {
+            freeStars();
             SaveData saveData = API.get(SaveData.class);
 
             equippedFlag.setData(saveData.getFlagsSaveData());
@@ -411,6 +410,16 @@ public class Dialogs {
         public void show(Runnable onComplete) {
             super.show(onComplete);
             setData();
+        }
+
+        public void freeStars() {
+            for (int i = equippedFlag.stars.getChildren().size - 1; i >= 0; i--) {
+                Actor actor = equippedFlag.stars.getChildren().get(i);
+                if (actor instanceof Widgets.StarWidget) {
+                    starPool.free((Widgets.StarWidget) actor);
+                    actor.remove();
+                }
+            }
         }
     }
 
@@ -544,6 +553,12 @@ public class Dialogs {
                     i++;
                 }
             }
+
+            public void freeStars () {
+                for (PetWidget widget : getWidgets()) {
+                    widget.freeStars();
+                }
+            }
         }
 
         protected class PetWidget extends BorderedTable {
@@ -579,6 +594,16 @@ public class Dialogs {
                     equipButton.setStyle(OffsetButton.Style.GREEN_35);
                 });
             }
+
+            public void freeStars() {
+                for (int i = getChildren().size - 1; i >= 0; i--) {
+                    Actor actor = getChildren().get(i);
+                    if (actor instanceof Widgets.StarWidget) {
+                        starPool.free((Widgets.StarWidget) actor);
+                        actor.remove();
+                    }
+                }
+            }
         }
 
         protected class EquipButton extends OffsetButton {
@@ -599,13 +624,7 @@ public class Dialogs {
                     PetsSaveData petsSaveData = API.get(SaveData.class).getPetsSaveData();
                     if (newSelectedPet.isEmpty() || petsSaveData.getEquipped().compareTo(newSelectedPet) == 0)
                         return ;
-                    for (int i = getChildren().size - 1; i >= 0; i--) {
-                        Actor actor = getChildren().get(i);
-                        if (actor instanceof Widgets.StarWidget) {
-                            starPool.free((Widgets.StarWidget) actor);
-                            actor.remove();
-                        }
-                    }
+                    freeStars();
                     petsSaveData.setEquipped(newSelectedPet);
                     hide(super.onClick);
                     // During flag changing there can be a lot of changes (like general stats can be changed)
@@ -635,19 +654,14 @@ public class Dialogs {
                 container.add(icon);
 
                 setOnClick(() -> {
-                    for (int i = getChildren().size - 1; i >= 0; i--) {
-                        Actor actor = getChildren().get(i);
-                        if (actor instanceof Widgets.StarWidget) {
-                            starPool.free((Widgets.StarWidget) actor);
-                            actor.remove();
-                        }
-                    }
+                    freeStars();
                     API.get(DialogManager.class).hide(PetsDialog.class);
                 });
             }
         }
 
         public void setData () {
+            freeStars();
             SaveData saveData = API.get(SaveData.class);
 
             equippedPet.setData(saveData.getPetsSaveData());
@@ -660,6 +674,18 @@ public class Dialogs {
         public void show(Runnable onComplete) {
             super.show(onComplete);
             setData();
+        }
+
+        public void freeStars() {
+            for (int i = equippedPet.iconWrapper.getChildren().size - 1; i >= 0; i--) {
+                Actor actor = equippedPet.iconWrapper.getChildren().get(i);
+                if (actor instanceof Widgets.StarWidget) {
+                    System.out.println("maqrum em");
+                    starPool.free((Widgets.StarWidget) actor);
+                    actor.remove();
+                }
+            }
+            petsContainer.freeStars();
         }
     }
 
@@ -758,13 +784,7 @@ public class Dialogs {
                     container.add(label).pad(30);
 
                     setOnClick(() -> {
-                        for (int i = getChildren().size - 1; i >= 0; i--) {
-                            Actor actor = getChildren().get(i);
-                            if (actor instanceof Widgets.StarWidget) {
-                                starPool.free((Widgets.StarWidget) actor);
-                                actor.remove();
-                            }
-                        }
+                        freeStars();
                         Gdx.app.postRunnable(() -> hide(super.onClick));
                     });
                 }
@@ -854,6 +874,14 @@ public class Dialogs {
             }
 
             public void setData (@Null  GearSaveData gearSaveData) {
+                for (int i = getChildren().size - 1; i >= 0; i--) {
+                    Actor actor = getChildren().get(i);
+                    if (actor instanceof Widgets.StarWidget) {
+                        System.out.println("stex el em mtnum");
+                        starPool.free((Widgets.StarWidget) actor);
+                        actor.remove();
+                    }
+                }
                 if (gearSaveData == null) {
                     return;
                 }
@@ -875,8 +903,10 @@ public class Dialogs {
                     stats.add(statWidget);
                 }
 
+                System.out.println(gearSaveData.getRarity().getStarCount());
                 int xPos = 10;
                 for (int j = 0; j < gearSaveData.getRarity().getStarCount(); j++) {
+                    System.out.println("bitches im here");
                     Widgets.StarWidget star = starPool.obtain();
                     star.setSize(80, 80);
                     star.setPosition(xPos,  320);
@@ -885,10 +915,21 @@ public class Dialogs {
                 }
 
             }
+
+            public void freeStars() {
+                for (int i = iconSegment.getChildren().size - 1; i >= 0; i--) {
+                    Actor actor = iconSegment.getChildren().get(i);
+                    if (actor instanceof Widgets.StarWidget) {
+                        starPool.free((Widgets.StarWidget) actor);
+                        actor.remove();
+                    }
+                }
+            }
         }
 
         @Override
         public void show(Runnable onComplete) {
+            freeStars();
             super.show(onComplete);
             GearsGameData gearsGameData = API.get(GameData.class).getGearsGameData();
             GearsSaveData gearsSaveData = API.get(SaveData.class).getGearsSaveData();
@@ -901,6 +942,11 @@ public class Dialogs {
             GearSaveData gearSaveData = gearsSaveData.getEquippedGears().get(type);
             currentGear.setData(gearSaveData);
             droppedGear.setData(generatedItem);
+        }
+
+        public void freeStars() {
+            currentGear.gearWidget.freeStars();
+            droppedGear.gearWidget.freeStars();
         }
     }
 }

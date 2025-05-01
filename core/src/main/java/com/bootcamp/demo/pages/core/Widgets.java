@@ -36,8 +36,8 @@ public class Widgets {
         @Getter @Setter
         private Rarity rarity;
         @Getter @Setter
-        EnumMap<Stat, Float> stats;
-        Pool<StarWidget> starPool;
+        private EnumMap<Stat, Float> stats;
+        private final Pool<StarWidget> starPool;
 
         public GearWidget() {
             setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#b29985")));

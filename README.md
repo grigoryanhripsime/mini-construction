@@ -34,3 +34,24 @@ Useful Gradle tasks and flags:
 
 Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
 For example, `core:clean` removes `build` folder only from the `core` project.
+
+
+### ✅ Key Features
+
+- **Star Widget Pooling**:  
+  All star indicators are reused using a pool system to improve performance.
+
+- **Loot Dialog**:  
+  A dialog appears when a new gear item is looted. Players can:
+    - View the dropped item
+    - Compare it with the currently equipped gear
+    - Choose to **equip** or **drop** it
+
+- **Flags Dialog**:  
+  Shows detailed information about the currently equipped flag and allows the player to switch to another flag.
+
+- **Pets Dialog**:  
+  Displays information about the player’s current pet, with the option to select a different one.
+
+- **Gear Info Dialogs**:  
+  Each gear item in the main gear section has its own detailed dialog, showing stats and rarity.

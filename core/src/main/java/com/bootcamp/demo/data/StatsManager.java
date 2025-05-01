@@ -10,12 +10,14 @@ import java.util.EnumMap;
 
 public class StatsManager {
     public static EnumMap<Stat, Float> getAllStats (SaveData saveData) {
-        final ObjectMap<GearGameData.Type, GearSaveData> equippedGears = saveData.getGearsSaveData().getEquippedGears();
-
         final EnumMap<Stat, Float> allStats = new EnumMap<>(Stat.class);
+
         for (Stat entry : Stat.values()) {
             allStats.put(entry, 0f);
         }
+
+        //Main gears
+        final ObjectMap<GearGameData.Type, GearSaveData> equippedGears = saveData.getGearsSaveData().getEquippedGears();
 
         for (ObjectMap.Entry<GearGameData.Type, GearSaveData> entry : equippedGears) {
             for (EnumMap.Entry<Stat, Float> stat : entry.value.getStatsSaveData().getStat().entrySet()) {
@@ -25,7 +27,8 @@ public class StatsManager {
             }
         }
 
-        IntMap<TacticalSaveData> tacticals = saveData.getTacticalsSaveData().getTacticals();
+        //Tactiocals
+        final IntMap<TacticalSaveData> tacticals = saveData.getTacticalsSaveData().getTacticals();
 
         for (IntMap.Entry<TacticalSaveData> tactical : tacticals) {
             for (EnumMap.Entry<Stat, Float> stat : tactical.value.getStatsSaveData().getStat().entrySet()) {
@@ -33,6 +36,22 @@ public class StatsManager {
                 float result = allStats.get(key) + stat.getValue();
                 allStats.put(key, result);
             }
+        }
+
+        //Pet
+        PetSaveData petSaveData = saveData.getPetsSaveData().getPets().get(saveData.getPetsSaveData().getEquipped());
+        for (EnumMap.Entry<Stat, Float> stat : petSaveData.getStatsSaveData().getStat().entrySet()) {
+            Stat key = stat.getKey();
+            float result = allStats.get(key) + stat.getValue();
+            allStats.put(key, result);
+        }
+
+        //Flag
+        FlagSaveData flagSaveData = saveData.getFlagsSaveData().getFlags().get(saveData.getFlagsSaveData().getEquipped());
+        for (EnumMap.Entry<Stat, Float> stat : flagSaveData.getStatsSaveData().getStat().entrySet()) {
+            Stat key = stat.getKey();
+            float result = allStats.get(key) + stat.getValue();
+            allStats.put(key, result);
         }
 
         for (EnumMap.Entry<Stat, Float> entry : allStats.entrySet()) {
