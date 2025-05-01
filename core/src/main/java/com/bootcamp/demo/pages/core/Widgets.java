@@ -1,17 +1,16 @@
 package com.bootcamp.demo.pages.core;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
+import com.badlogic.gdx.utils.Pool;
 import com.bootcamp.demo.data.Rarity;
 import com.bootcamp.demo.data.Stat;
-import com.bootcamp.demo.data.game.FlagsGameData;
-import com.bootcamp.demo.data.game.GameData;
-import com.bootcamp.demo.data.game.GearGameData;
-import com.bootcamp.demo.data.game.PetsGameData;
+import com.bootcamp.demo.data.game.*;
 import com.bootcamp.demo.data.save.*;
 import com.bootcamp.demo.dialogs.core.DialogManager;
 import com.bootcamp.demo.engine.Labels;
@@ -31,10 +30,6 @@ public class Widgets {
 
     public static class GearWidget extends BorderedTable {
         @Getter @Setter
-        private String title;
-        @Getter @Setter
-        private GearGameData.Type type;
-        @Getter @Setter
         private Image icon;
         @Getter @Setter
         private Label lvl;
@@ -42,6 +37,7 @@ public class Widgets {
         private Rarity rarity;
         @Getter @Setter
         EnumMap<Stat, Float> stats;
+        Pool<StarWidget> starPool;
 
         public GearWidget() {
             setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#b29985")));
@@ -53,9 +49,24 @@ public class Widgets {
             lvl = Labels.make(GameFont.BOLD_20);
             lvl.setPosition(20, 30);
             addActor(lvl);
+
+            starPool = new Pool<StarWidget>() {
+                @Override
+                protected StarWidget newObject() {
+                    return new StarWidget();
+                }
+            };
         }
 
         public void setData (@Null GearSaveData gearSaveData) {
+            //by this for we are getting back our stars
+            for (int i = getChildren().size - 1; i >= 0; i--) {
+                Actor actor = getChildren().get(i);
+                if (actor instanceof StarWidget) {
+                    starPool.free((StarWidget) actor);
+                    actor.remove();
+                }
+            }
             if (gearSaveData == null)
             {
                 setEmpty();
@@ -64,30 +75,35 @@ public class Widgets {
             GearGameData gearGameData = API.get(GameData.class).getGearsGameData().getGears().get(gearSaveData.getName());
             setBackground(Squircle.SQUIRCLE_35.getDrawable(gearSaveData.getRarity().getBackgroundColor()));
             icon.setDrawable(gearGameData.getIcon());
-            title = gearGameData.getTitle();
-            type = gearGameData.getType();
             lvl.setText("Lv." + gearSaveData.getLevel());
             rarity = gearSaveData.getRarity();
 
-            int xPos = 0;
+            int xPos = 10;
             for (int j = 0; j < rarity.getStarCount(); j++) {
-                final Image star = new Image(Resources.getDrawable("ui/star")); //this need to be pulled, not created everytime
-                star.setSize(50, 50);
+                StarWidget star = starPool.obtain();
                 star.setPosition(xPos, 170);
                 xPos += 30;
                 addActor(star);
             }
             stats = gearSaveData.getStatsSaveData().getStat();
 
-            setOnClick(new Runnable() {
-                @Override
-                public void run() {
-                    Dialogs.GearDialog gearDialog = API.get(DialogManager.class).getDialog(Dialogs.GearDialog.class);
-                    gearDialog.setData(GearWidget.this);
-                    API.get(DialogManager.class).show(Dialogs.GearDialog.class);
-                }
+            setOnClick(() -> {
+                Dialogs.GearDialog gearDialog = API.get(DialogManager.class).getDialog(Dialogs.GearDialog.class);
+                gearDialog.setData(gearSaveData);
+                API.get(DialogManager.class).show(Dialogs.GearDialog.class);
             });
         }
+    }
+
+    public static class StarWidget extends Image implements Pool.Poolable {
+
+        public StarWidget () {
+            setDrawable(Resources.getDrawable("ui/star"));
+            setSize(50, 50);
+        }
+
+        @Override
+        public void reset() {}
     }
 
     public static class StatWidget extends Table {
@@ -147,9 +163,9 @@ public class Widgets {
     }
 
     public static class LootUpgradeButton extends OffsetButton {
-        private Image shovelUpgradeImage;
-        private Label bladeLevel;
-        private Label handleLevel;
+        private final Image shovelUpgradeImage;
+        private final Label bladeLevel;
+        private final Label handleLevel;
 
         public LootUpgradeButton () {
             shovelUpgradeImage = new Image();
@@ -181,6 +197,7 @@ public class Widgets {
             container.add(shovelLevelWrapper).pad(30);
 
         }
+
         public void setData () {
             shovelUpgradeImage.setDrawable(Resources.getDrawable("ui/shovel-upgrade-icon"));
             bladeLevel.setText("Lv.1");
@@ -189,8 +206,8 @@ public class Widgets {
     }
 
     public static class LootButton extends OffsetButton {
-        private Image shovel;
-        private Label label;
+        private final Image shovel;
+        private final Label label;
 
         public LootButton () {
             label = Labels.make(GameFont.BOLD_28);
@@ -206,9 +223,7 @@ public class Widgets {
             container.add(shovel).size(130, 130);
 
 
-            setOnClick(() -> {
-                API.get(DialogManager.class).show(Dialogs.RandomGearDialog.class);
-            });
+            setOnClick(() -> API.get(DialogManager.class).show(Dialogs.RandomGearDialog.class));
 
         }
 
@@ -219,8 +234,8 @@ public class Widgets {
     }
 
     public static class AutoLootButton extends OffsetButton {
-        private Label label;
-        private Image shovel;
+        private final Label label;
+        private final Image shovel;
 
         public AutoLootButton () {
             label = Labels.make(GameFont.BOLD_28);
@@ -244,37 +259,64 @@ public class Widgets {
     }
 
     public static  class FlagWidget extends BorderedTable {
-        private Image icon;
+        private final Image icon;
+        private final Pool<StarWidget> starPool;
 
         public FlagWidget () {
+            starPool = new Pool<StarWidget>() {
+                @Override
+                protected StarWidget newObject() {
+                    return new StarWidget();
+                }
+            };
             setBackground(Squircle.SQUIRCLE_35.getDrawable(Color.valueOf("#b29985")));
             icon = new Image();
             icon.setSize(180, 180);
             add(icon);
 
-            setOnClick(new Runnable() {
-                @Override
-                public void run() {
-                    API.get(DialogManager.class).show(Dialogs.FlagsDialog.class);
-                }
-            });
+            setOnClick(() -> API.get(DialogManager.class).show(Dialogs.FlagsDialog.class));
         }
 
         public void setData (@Null FlagsSaveData flagsSaveData) {
+            //by this for we are getting back our stars
+            for (int i = getChildren().size - 1; i >= 0; i--) {
+                Actor actor = getChildren().get(i);
+                if (actor instanceof StarWidget) {
+                    starPool.free((StarWidget) actor);
+                    actor.remove();
+                }
+            }
             if (flagsSaveData == null) {
                 setEmpty();
                 return;
             }
-            FlagsGameData flagsGameData = API.get(GameData.class).getFlagsGameData();
-            icon.setDrawable(flagsGameData.getFlags().get(flagsSaveData.getEquipped()).getIcon());
+            FlagSaveData equipped = flagsSaveData.getFlags().get(flagsSaveData.getEquipped());
+            FlagGameData flagGameData = API.get(GameData.class).getFlagsGameData().getFlags().get(equipped.getName());
+            icon.setDrawable(flagGameData.getIcon());
+            setBackground(Squircle.SQUIRCLE_35.getDrawable(equipped.getRarity().getBackgroundColor()));
+            int xPos = 10;
+            for (int j = 0; j < equipped.getRarity().getStarCount(); j++) {
+                StarWidget star = starPool.obtain();
+                star.setPosition(xPos, 170);
+                xPos += 30;
+                addActor(star);
+            }
         }
     }
 
     public static class PetWidget extends BorderedTable {
-        private Image pet;
-        private HomeButton homeButton;
+        private final Image pet;
+        private final HomeButton homeButton;
+        Pool<StarWidget> starPool;
+
 
         public PetWidget () {
+            starPool = new Pool<StarWidget>() {
+                @Override
+                protected StarWidget newObject() {
+                    return new StarWidget();
+                }
+            };
             pet = new Image();
             homeButton = new HomeButton();
 
@@ -285,19 +327,31 @@ public class Widgets {
         }
 
         public void setData (PetsSaveData petsSaveData) {
-            PetsGameData petsGameData = API.get(GameData.class).getPetsGameData();
-            pet.setDrawable(petsGameData.getPets().get(petsSaveData.getEquipped()).getIcon());
-            homeButton.setData();
-            setOnClick(new Runnable() {
-                @Override
-                public void run() {
-                    API.get(DialogManager.class).show(Dialogs.PetsDialog.class);
+            //by this for we are getting back our stars
+            for (int i = getChildren().size - 1; i >= 0; i--) {
+                Actor actor = getChildren().get(i);
+                if (actor instanceof StarWidget) {
+                    starPool.free((StarWidget) actor);
+                    actor.remove();
                 }
-            });
+            }
+            PetSaveData petSaveData = petsSaveData.getPets().get(petsSaveData.getEquipped());
+            PetGameData petGameData = API.get(GameData.class).getPetsGameData().getPets().get(petSaveData.getName());
+            pet.setDrawable(petGameData.getIcon());
+            setBackground(Squircle.SQUIRCLE_35.getDrawable(petSaveData.getRarity().getBackgroundColor()));
+            homeButton.setData();
+            setOnClick(() -> API.get(DialogManager.class).show(Dialogs.PetsDialog.class));
+            int xPos = 10;
+            for (int j = 0; j < petSaveData.getRarity().getStarCount(); j++) {
+                StarWidget star = starPool.obtain();
+                star.setPosition(xPos, 450);
+                xPos += 30;
+                addActor(star);
+            }
         }
 
         private class HomeButton extends OffsetButton {
-            private Image icon;
+            private final Image icon;
 
             HomeButton () {
                 icon = new Image();

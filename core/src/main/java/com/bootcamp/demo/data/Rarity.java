@@ -7,22 +7,22 @@ import com.bootcamp.demo.localization.GameFont;
 import lombok.Getter;
 
 public enum Rarity {
-    RUSTED(1, Color.BROWN, "Rusted"),
-    RUSTED_2(2, Color.BROWN, "Rusted"),
-    SCRAP(1, Color.BLUE, "Scrap"),
-    SCRAP_2(2, Color.BLUE, "Scrap"),
-    HARDENED(1, Color.PURPLE, "Hardened"),
-    HARDENED_2(2, Color.PURPLE, "Hardened"),
-    ELITE(1, Color.YELLOW, "Elite"),
-    ELITE_2(2, Color.YELLOW, "Elite"),
-    ASCENDANT(1, Color.RED, "Ascendant"),
-    ASCENDANT_2(2, Color.RED, "Ascendant"),
-    NUCLEAR(1, Color.GREEN, "Nuclear"),
-    JUGGERNAUT(1, Color.PURPLE, "Juggernaut"),
-    DOMINION(1, Color.PINK, "Dominion"),
-    OBLIVION(1, Color.GREEN, "Oblivion"),
-    IMMORTAL(1, Color.BLUE, "Immortal"),
-    ETHEREAL(1, Color.WHITE, "Ethereal");
+    RUSTED(1, Color.valueOf("#B29986"), "Rusted"),
+    RUSTED_2(2, Color.valueOf("#B29986"), "Rusted"),
+    SCRAP(1, Color.valueOf("#5F99C4"), "Scrap"),
+    SCRAP_2(2, Color.valueOf("#5F99C4"), "Scrap"),
+    HARDENED(1, Color.valueOf("#B892C4"), "Hardened"),
+    HARDENED_2(2, Color.valueOf("#B892C4"), "Hardened"),
+    ELITE(1, Color.valueOf("#E1AE50"), "Elite"),
+    ELITE_2(2, Color.valueOf("#E1AE50"), "Elite"),
+    ASCENDANT(1, Color.valueOf("#DA5857"), "Ascendant"),
+    ASCENDANT_2(2, Color.valueOf("#DA5857"), "Ascendant"),
+    NUCLEAR(1, Color.valueOf("#A8D53C"), "Nuclear"),
+    JUGGERNAUT(1, Color.valueOf("#7A6DEC"), "Juggernaut"),
+    DOMINION(1, Color.valueOf("#FC647C"), "Dominion"),
+    OBLIVION(1, Color.valueOf("#4FFFBA"), "Oblivion"),
+    IMMORTAL(1, Color.valueOf("#68FEDF"), "Immortal"),
+    ETHEREAL(1, Color.valueOf("#ded978"), "Ethereal");
 
     @Getter
     private final int starCount;
