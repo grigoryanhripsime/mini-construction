@@ -175,8 +175,6 @@ public class LootingPage extends APage {
         statContainer.setData(saveData);
         mainGearContainer.setData(saveData.getGearsSaveData());
         tacticalsContainer.setData(saveData.getTacticalsSaveData());
-
-
         flagWidget.setData(saveData.getFlagsSaveData());
         petWidget.setData(saveData.getPetsSaveData());
         lootUpgradeButton.setData();
@@ -184,6 +182,7 @@ public class LootingPage extends APage {
         autoLootButton.setData();
 
         mainGearContainer.animate();
+
     }
 
     @Override

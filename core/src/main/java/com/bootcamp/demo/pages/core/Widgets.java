@@ -221,9 +221,7 @@ public class Widgets {
             container.add(label).pad(30);
             container.add(shovel).size(130, 130);
 
-
             setOnClick(() -> API.get(DialogManager.class).show(Dialogs.RandomGearDialog.class));
-
         }
 
         public void setData () {

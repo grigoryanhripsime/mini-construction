@@ -1,6 +1,6 @@
 package com.bootcamp.demo.pages.core;
 
-import com.badlogic.gdx.Gdx;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -784,8 +784,7 @@ public class Dialogs {
                     container.add(label).pad(30);
 
                     setOnClick(() -> {
-                        freeStars();
-                        Gdx.app.postRunnable(() -> hide(super.onClick));
+                        hideDialog();
                     });
                 }
 
@@ -810,18 +809,8 @@ public class Dialogs {
                     container.add(label).pad(30);
 
                     setOnClick(() -> {
-                        for (int i = getChildren().size - 1; i >= 0; i--) {
-                            Actor actor = getChildren().get(i);
-                            if (actor instanceof Widgets.StarWidget) {
-                                starPool.free((Widgets.StarWidget) actor);
-                                actor.remove();
-                            }
-                        }
                         API.get(SaveData.class).getGearsSaveData().getEquippedGears().put(gearWidget.getType(), generatedItem);
-                        Gdx.app.postRunnable(() -> {
-                            hide(super.onClick);
-                            API.get(PageManager.class).getPage(LootingPage.class).setData();
-                        });
+                        hideDialog();
                     });
                 }
 
@@ -874,14 +863,7 @@ public class Dialogs {
             }
 
             public void setData (@Null  GearSaveData gearSaveData) {
-                for (int i = getChildren().size - 1; i >= 0; i--) {
-                    Actor actor = getChildren().get(i);
-                    if (actor instanceof Widgets.StarWidget) {
-                        System.out.println("stex el em mtnum");
-                        starPool.free((Widgets.StarWidget) actor);
-                        actor.remove();
-                    }
-                }
+                freeStars();
                 if (gearSaveData == null) {
                     return;
                 }
@@ -906,7 +888,6 @@ public class Dialogs {
                 System.out.println(gearSaveData.getRarity().getStarCount());
                 int xPos = 10;
                 for (int j = 0; j < gearSaveData.getRarity().getStarCount(); j++) {
-                    System.out.println("bitches im here");
                     Widgets.StarWidget star = starPool.obtain();
                     star.setSize(80, 80);
                     star.setPosition(xPos,  320);
@@ -947,6 +928,12 @@ public class Dialogs {
         public void freeStars() {
             currentGear.gearWidget.freeStars();
             droppedGear.gearWidget.freeStars();
+        }
+
+        public void hideDialog() {
+            freeStars();
+            hide(null);
+            API.get(PageManager.class).getPage(LootingPage.class).setData();
         }
     }
 }

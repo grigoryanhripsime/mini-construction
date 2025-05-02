@@ -33,7 +33,6 @@ public class Containers {
         }
 
         public void setData (GearsSaveData gearsSaveData) {
-
             final ObjectMap<GearGameData.Type, GearSaveData> equippedGears = gearsSaveData.getEquippedGears();
             for (ObjectMap.Entry<GearGameData.Type, GearSaveData> equippedGear : equippedGears) {
                 getWidgets().get(equippedGear.key.ordinal()).setData(equippedGear.value);
