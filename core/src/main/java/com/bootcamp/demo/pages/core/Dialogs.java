@@ -176,6 +176,7 @@ public class Dialogs {
         private String newSelectedFlag;
         private EquipButton equipButton;
         private Pool<Widgets.StarWidget> starPool;
+        private Pool<BlockedWidget> blockedPool;
 
 
         @Override
@@ -196,6 +197,12 @@ public class Dialogs {
                 @Override
                 protected Widgets.StarWidget newObject() {
                     return new Widgets.StarWidget();
+                }
+            };
+            blockedPool = new Pool<BlockedWidget>() {
+                @Override
+                protected BlockedWidget newObject() {
+                    return new BlockedWidget();
                 }
             };
 
@@ -255,6 +262,7 @@ public class Dialogs {
             public void setData (FlagsSaveData flagsSaveData) {
                 FlagSaveData equipped = flagsSaveData.getFlags().get(flagsSaveData.getEquipped());
                 FlagsGameData flagsGameData = API.get(GameData.class).getFlagsGameData();
+
                 icon.setDrawable(flagsGameData.getFlags().get(flagsSaveData.getEquipped()).getIcon());
                 name.setText(equipped.getName() + " flag");
                 lvl.setText("Lvl: " + equipped.getLevel());
@@ -271,7 +279,6 @@ public class Dialogs {
                 }
 
                 stats.clearChildren();
-
                 for (Map.Entry<Stat, Float> entry : equipped.getStatsSaveData().getStat().entrySet()) {
                     Widgets.StatWidget statWidget = new Widgets.StatWidget();
                     statWidget.setData(entry);
@@ -306,11 +313,10 @@ public class Dialogs {
         }
 
         protected class FlagWidget extends BorderedTable {
-            Image icon;
+            private final Image icon;
 
             public FlagWidget () {
                 icon = new Image();
-
                 add(icon);
             }
 
@@ -324,7 +330,7 @@ public class Dialogs {
 
                 if (!isAvailable)
                 {
-                    Image blocked = new Image(Resources.getDrawable("ui/flags/blocked")); //TODO: make this block icon reusable, take from pool
+                    BlockedWidget blocked = blockedPool.obtain();
                     blocked.setPosition(120, 10);
                     addActor(blocked);
                     return;
@@ -338,6 +344,17 @@ public class Dialogs {
                     equipButton.setStyle(OffsetButton.Style.GREEN_35);
                 });
             }
+        }
+
+        public class BlockedWidget extends Image implements Pool.Poolable {
+
+            public BlockedWidget () {
+                setDrawable(Resources.getDrawable("ui/flags/blocked"));
+                setSize(120, 120);
+            }
+
+            @Override
+            public void reset() {}
         }
 
         protected class EquipButton extends OffsetButton {
@@ -355,12 +372,12 @@ public class Dialogs {
                 container.add(label).pad(30);
 
                 setOnClick(() -> {
-
                     FlagsSaveData flagsSaveData = API.get(SaveData.class).getFlagsSaveData();
                     if (newSelectedFlag.isEmpty() || flagsSaveData.getEquipped().compareTo(newSelectedFlag) == 0)
                         return ;
                     flagsSaveData.setEquipped(newSelectedFlag);
                     freeStars();
+                    freeBlockedWidgets();
                     hide(super.onClick);
                     // During flag changing there can be a lot of changes (like general stats can be changed)
                     API.get(PageManager.class).getPage(LootingPage.class).setData();
@@ -390,6 +407,7 @@ public class Dialogs {
 
                 setOnClick(() -> {
                     freeStars();
+                    freeBlockedWidgets();
                     API.get(DialogManager.class).hide(FlagsDialog.class);
                 });
             }
@@ -397,6 +415,7 @@ public class Dialogs {
 
         public void setData () {
             freeStars();
+            freeBlockedWidgets();
             SaveData saveData = API.get(SaveData.class);
 
             equippedFlag.setData(saveData.getFlagsSaveData());
@@ -421,6 +440,19 @@ public class Dialogs {
                 }
             }
         }
+
+        public void freeBlockedWidgets() {
+            for (FlagWidget widget : flagsContainer.getWidgets()) {
+                for (int i = widget.getChildren().size - 1; i >= 0; i--) {
+                    Actor actor = widget.getChildren().get(i);
+                    if (actor instanceof BlockedWidget) {
+                        blockedPool.free((BlockedWidget) actor);
+                        actor.remove();
+                    }
+                }
+            }
+        }
+
     }
 
     public static class PetsDialog extends ADialog {
@@ -546,7 +578,6 @@ public class Dialogs {
             }
 
             public void setData (PetsSaveData petsSaveData) {
-                PetsGameData petsGameData = API.get(GameData.class).getPetsGameData();
                 int i = 0;
                 for (ObjectMap.Entry<String, PetSaveData> entry : petsSaveData.getPets()) {
                     getWidgets().get(i).setData(entry.value, petsSaveData.getEquipped());
@@ -680,7 +711,6 @@ public class Dialogs {
             for (int i = equippedPet.iconWrapper.getChildren().size - 1; i >= 0; i--) {
                 Actor actor = equippedPet.iconWrapper.getChildren().get(i);
                 if (actor instanceof Widgets.StarWidget) {
-                    System.out.println("maqrum em");
                     starPool.free((Widgets.StarWidget) actor);
                     actor.remove();
                 }
@@ -783,9 +813,7 @@ public class Dialogs {
                     super.buildInner(container);
                     container.add(label).pad(30);
 
-                    setOnClick(() -> {
-                        hideDialog();
-                    });
+                    setOnClick(RandomGearDialog.this::hideDialog);
                 }
 
                 public void setData () {
@@ -885,7 +913,6 @@ public class Dialogs {
                     stats.add(statWidget);
                 }
 
-                System.out.println(gearSaveData.getRarity().getStarCount());
                 int xPos = 10;
                 for (int j = 0; j < gearSaveData.getRarity().getStarCount(); j++) {
                     Widgets.StarWidget star = starPool.obtain();
@@ -918,7 +945,6 @@ public class Dialogs {
             generatedItem = GenerateManager.generateRandomGear();
             String name = generatedItem.getName();
             GearGameData.Type type = gearsGameData.getGears().get(name).getType();
-            System.out.println(type.name() + " " + gearsSaveData.getEquippedGears().get(type));
 
             GearSaveData gearSaveData = gearsSaveData.getEquippedGears().get(type);
             currentGear.setData(gearSaveData);
